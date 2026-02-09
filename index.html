@@ -41,6 +41,13 @@ body{
   padding:14px;
 }
 
+/* Адаптивность */
+@media (max-width:500px){
+  .menu{
+    grid-template-columns:1fr;
+  }
+}
+
 .card{
   background:linear-gradient(180deg,var(--card),var(--card-dark));
   border-radius:22px;
@@ -97,6 +104,10 @@ body{
   margin-top:8px;
 }
 
+.controls div{
+  transition: all 0.2s;
+}
+
 .ctrl{
   width:32px;
   height:32px;
@@ -137,7 +148,7 @@ body{
 
 <div class="cart">
   <div>🛒 <b id="items">0</b> • <b id="total">0 ₽</b></div>
-  <button>Заказать</button>
+  <button id="orderBtn">Заказать</button>
 </div>
 
 <script>
@@ -149,14 +160,31 @@ const IMAGES={
  <ellipse cx='35' cy='55' rx='10' ry='8' fill='#e74c3c'/>
  <ellipse cx='65' cy='55' rx='10' ry='8' fill='#e74c3c'/>
  <rect x='45' y='20' width='10' height='30' rx='5' fill='#f1c40f'/>
+ </svg>`,
+ wings:`data:image/svg+xml;utf8,
+ <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+ <ellipse cx='50' cy='50' rx='28' ry='15' fill='#d35400'/>
+ <ellipse cx='40' cy='50' rx='8' ry='5' fill='#e67e22'/>
+ <ellipse cx='60' cy='50' rx='8' ry='5' fill='#e67e22'/>
+ <rect x='48' y='30' width='4' height='25' rx='2' fill='#f1c40f'/>
+ </svg>`,
+ stomach:`data:image/svg+xml;utf8,
+ <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+ <ellipse cx='50' cy='55' rx='25' ry='12' fill='#8e44ad'/>
+ <rect x='45' y='30' width='10' height='20' rx='5' fill='#f1c40f'/>
+ </svg>`,
+ spicy:`data:image/svg+xml;utf8,
+ <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+ <ellipse cx='50' cy='55' rx='25' ry='12' fill='#c0392b'/>
+ <polygon points='50,25 55,45 45,45' fill='#e74c3c'/>
  </svg>`
 };
 
 const dishes=[
  {id:1,name:"Курица с овощами",weight:"550 г",price:700,img:IMAGES.chicken},
- {id:2,name:"Крылья в кока-коле",weight:"500 г",price:750,img:IMAGES.chicken},
- {id:3,name:"Крылья жареные",weight:"500 г",price:700,img:IMAGES.chicken},
- {id:4,name:"Желудки острые",weight:"500 г",price:700,img:IMAGES.chicken}
+ {id:2,name:"Крылья в кока-коле",weight:"500 г",price:750,img:IMAGES.wings},
+ {id:3,name:"Крылья жареные",weight:"500 г",price:700,img:IMAGES.wings},
+ {id:4,name:"Желудки острые",weight:"500 г",price:700,img:IMAGES.spicy}
 ];
 
 const cart={},menu=document.getElementById("menu");
@@ -182,7 +210,11 @@ dishes.forEach(d=>{
 
 function chg(id,v){
  cart[id]=Math.max(0,cart[id]+v);
- document.getElementById("c"+id).innerText=cart[id];
+ const counter=document.getElementById("c"+id);
+ counter.innerText=cart[id];
+ counter.style.transform="scale(1.3)";
+ setTimeout(()=>counter.style.transform="scale(1)",150);
+
  let items=0,total=0;
  dishes.forEach(d=>{
   items+=cart[d.id];
@@ -191,6 +223,19 @@ function chg(id,v){
  document.getElementById("items").innerText=items;
  document.getElementById("total").innerText=total+" ₽";
 }
+
+/* Заказ */
+document.getElementById("orderBtn").onclick = ()=>{
+ let summary = "";
+ dishes.forEach(d=>{
+   if(cart[d.id]>0) summary += `${d.name} × ${cart[d.id]}\n`;
+ });
+ if(summary===""){
+   alert("Корзина пуста!");
+ } else {
+   alert(`Вы заказали:\n${summary}\nИтого: ${document.getElementById("total").innerText}`);
+ }
+};
 </script>
 
 </body>
