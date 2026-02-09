@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Меню</title>
+
+<style>
+:root{
+  --bg:#3b0d16;
+  --card:#6b1a2a;
+  --card-dark:#531320;
+  --accent:#f3e7d3;
+  --text:#ffffff;
+  --muted:#e1cfc0;
+}
+
+*{
+  box-sizing:border-box;
+  font-family:-apple-system,BlinkMacSystemFont,Inter,sans-serif;
+}
+
+body{
+  margin:0;
+  background:linear-gradient(180deg,#2d0a12,#4a101c);
+  color:var(--text);
+  padding-bottom:100px;
+}
+
+.header{
+  padding:18px;
+  text-align:center;
+  font-size:22px;
+  font-weight:600;
+}
+
+.menu{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+  padding:14px;
+}
+
+.card{
+  background:linear-gradient(180deg,var(--card),var(--card-dark));
+  border-radius:22px;
+  padding:14px;
+  box-shadow:
+    0 14px 28px rgba(0,0,0,.45),
+    inset 0 2px 0 rgba(255,255,255,.06),
+    inset 0 -6px 10px rgba(0,0,0,.4);
+}
+
+/* === 3D ПЛАШКА === */
+.fake3d{
+  height:100px;
+  border-radius:20px;
+  background:
+    radial-gradient(circle at top,#f7ead7 0%,#e2c7a6 40%,#c59b77 100%);
+  box-shadow:
+    inset 0 6px 10px rgba(255,255,255,.45),
+    inset 0 -12px 18px rgba(0,0,0,.35),
+    0 12px 20px rgba(0,0,0,.45);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* КАРТИНКА ВНУТРИ */
+.fake3d img{
+  width:64px;
+  height:64px;
+  filter:drop-shadow(0 6px 6px rgba(0,0,0,.35));
+}
+
+.title{
+  margin-top:10px;
+  font-size:14px;
+  font-weight:500;
+}
+
+.weight{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.price{
+  margin-top:4px;
+  font-weight:600;
+  color:var(--accent);
+}
+
+.controls{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:8px;
+}
+
+.ctrl{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  border:none;
+  background:linear-gradient(180deg,#f7ead7,#d9c3a6);
+  box-shadow:0 4px 8px rgba(0,0,0,.4);
+  font-size:18px;
+}
+
+.cart{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#4a101c;
+  padding:14px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.cart button{
+  background:linear-gradient(180deg,#f7ead7,#d9c3a6);
+  color:#4a101c;
+  border:none;
+  padding:12px 20px;
+  border-radius:16px;
+  font-weight:600;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">ГОРЯЧЕЕ</div>
+<div class="menu" id="menu"></div>
+
+<div class="cart">
+  <div>🛒 <b id="items">0</b> • <b id="total">0 ₽</b></div>
+  <button>Заказать</button>
+</div>
+
+<script>
+/* SVG-ИЛЛЮСТРАЦИИ (100% OFFLINE) */
+const IMAGES={
+ chicken:`data:image/svg+xml;utf8,
+ <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+ <ellipse cx='50' cy='60' rx='30' ry='18' fill='#c0392b'/>
+ <ellipse cx='35' cy='55' rx='10' ry='8' fill='#e74c3c'/>
+ <ellipse cx='65' cy='55' rx='10' ry='8' fill='#e74c3c'/>
+ <rect x='45' y='20' width='10' height='30' rx='5' fill='#f1c40f'/>
+ </svg>`
+};
+
+const dishes=[
+ {id:1,name:"Курица с овощами",weight:"550 г",price:700,img:IMAGES.chicken},
+ {id:2,name:"Крылья в кока-коле",weight:"500 г",price:750,img:IMAGES.chicken},
+ {id:3,name:"Крылья жареные",weight:"500 г",price:700,img:IMAGES.chicken},
+ {id:4,name:"Желудки острые",weight:"500 г",price:700,img:IMAGES.chicken}
+];
+
+const cart={},menu=document.getElementById("menu");
+
+dishes.forEach(d=>{
+ cart[d.id]=0;
+ menu.innerHTML+=`
+  <div class="card">
+    <div class="fake3d">
+      <img src="${d.img}">
+    </div>
+    <div class="title">${d.name}</div>
+    <div class="weight">${d.weight}</div>
+    <div class="price">${d.price} ₽</div>
+    <div class="controls">
+      <button class="ctrl" onclick="chg(${d.id},-1)">−</button>
+      <div id="c${d.id}">0</div>
+      <button class="ctrl" onclick="chg(${d.id},1)">+</button>
+    </div>
+  </div>
+ `;
+});
+
+function chg(id,v){
+ cart[id]=Math.max(0,cart[id]+v);
+ document.getElementById("c"+id).innerText=cart[id];
+ let items=0,total=0;
+ dishes.forEach(d=>{
+  items+=cart[d.id];
+  total+=cart[d.id]*d.price;
+ });
+ document.getElementById("items").innerText=items;
+ document.getElementById("total").innerText=total+" ₽";
+}
+</script>
+
+</body>
+</html>
