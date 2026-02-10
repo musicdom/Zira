@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ЗИРА — китайская кухня</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img src="logo.png" alt="Зира">
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <img src="logo.png" class="logo" id="headerLogo" alt="Зира">
+  <div class="nav">
+    <button onclick="openMenu()">Меню</button>
+    <button>О нас</button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="content">
+
+  <!-- HOME -->
+  <section id="home">
+    <h1>ЗИРА — китайская кухня</h1>
+    <p>Пряные блюда с настоящим восточным характером</p>
+  </section>
+
+  <!-- MENU -->
+  <section id="menu" class="hidden">
+    <div class="menu-grid">
+      <button>🔥 Горячее · Свинина</button>
+      <button>🔥 Горячее · Говядина</button>
+      <button>🔥 Горячее · Курица</button>
+      <button>🍚 Горячие гарниры</button>
+      <button>🐟 Рыба и морепродукты</button>
+      <button>🥘 Блюда на чугуне</button>
+      <button>🍜 Супы</button>
+      <button>🥗 Салаты</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // splash
+  window.onload = () => {
+    document.getElementById('splash').style.display = 'none';
+  };
+
+  // открыть меню
+  function openMenu() {
+    const logo = document.getElementById('headerLogo');
+    logo.classList.add('spin');
+
+    setTimeout(() => {
+      document.getElementById('home').classList.add('hidden');
+      document.getElementById('menu').classList.remove('hidden');
+      logo.classList.remove('spin');
+    }, 600);
+  }
+</script>
+
+</body>
+</html>
