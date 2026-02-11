@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ЗИРА — китайская кухня</title>
-  <link rel="stylesheet" href="style.css">
+
+  <!-- Защита от кэша -->
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
 
@@ -17,8 +19,8 @@
 <header class="header">
   <img src="logo.png" class="logo" id="headerLogo" alt="Зира">
   <div class="nav">
-    <button onclick="openMenu()">Меню</button>
-    <button>О нас</button>
+    <button id="menuBtn">Меню</button>
+    <button id="aboutBtn">О нас</button>
   </div>
 </header>
 
@@ -45,26 +47,63 @@
     </div>
   </section>
 
+  <!-- ABOUT -->
+  <section id="about" class="hidden">
+    <h2>О нас</h2>
+    <p>
+      ЗИРА — это китайская кухня с насыщенными специями,
+      ярким вкусом и настоящим восточным характером.
+    </p>
+  </section>
+
 </main>
 
 <script>
-  // splash
-  window.onload = () => {
-    document.getElementById('splash').style.display = 'none';
-  };
+document.addEventListener("DOMContentLoaded", function () {
 
-  // открыть меню
-  function openMenu() {
-    const logo = document.getElementById('headerLogo');
-    logo.classList.add('spin');
+  const splash = document.getElementById("splash");
+  const home = document.getElementById("home");
+  const menu = document.getElementById("menu");
+  const about = document.getElementById("about");
+  const logo = document.getElementById("headerLogo");
 
+  // Убираем splash
+  if (splash) {
     setTimeout(() => {
-      document.getElementById('home').classList.add('hidden');
-      document.getElementById('menu').classList.remove('hidden');
-      logo.classList.remove('spin');
+      splash.style.display = "none";
     }, 600);
   }
+
+  // Кнопка МЕНЮ
+  document.getElementById("menuBtn").addEventListener("click", function () {
+
+    if (logo) logo.classList.add("spin");
+
+    setTimeout(() => {
+      home.classList.add("hidden");
+      about.classList.add("hidden");
+      menu.classList.remove("hidden");
+      if (logo) logo.classList.remove("spin");
+    }, 400);
+  });
+
+  // Кнопка О НАС
+  document.getElementById("aboutBtn").addEventListener("click", function () {
+
+    if (logo) logo.classList.add("spin");
+
+    setTimeout(() => {
+      home.classList.add("hidden");
+      menu.classList.add("hidden");
+      about.classList.remove("hidden");
+      if (logo) logo.classList.remove("spin");
+    }, 400);
+  });
+
+});
 </script>
 
 </body>
+</html>
+
 </html>
