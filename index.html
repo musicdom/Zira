@@ -1,109 +1,176 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ЗИРА — китайская кухня</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ЗИРА — китайская кухня</title>
 
-  <!-- Защита от кэша -->
-  <link rel="stylesheet" href="style.css?v=5">
+<style>
+:root {
+  --bg:#3b0d16;
+  --card:#6b1a2a;
+  --text:#f5e9e4;
+}
+
+*{
+  box-sizing:border-box;
+  font-family:system-ui,-apple-system;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+/* CENTER HOME SCREEN */
+.home-screen{
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:20px;
+  transition:opacity .4s ease, transform .4s ease;
+}
+
+.home-screen.hidden{
+  opacity:0;
+  transform:translateY(-20px);
+  pointer-events:none;
+}
+
+/* LOGO */
+.logo{
+  width:160px;
+  margin-bottom:20px;
+  transition:transform .4s ease;
+}
+
+.logo.spin{
+  transform:rotate(360deg) scale(1.05);
+}
+
+/* TITLE */
+.title{
+  font-size:22px;
+  margin-bottom:25px;
+}
+
+/* BUTTONS */
+.btn{
+  background:linear-gradient(145deg,#6b1a2a,#561422);
+  border:none;
+  color:var(--text);
+  padding:14px 22px;
+  border-radius:14px;
+  margin:8px;
+  font-size:16px;
+  width:200px;
+}
+
+/* MENU SCREEN */
+.menu-screen{
+  padding:20px;
+  display:none;
+  animation:fadeIn .4s ease forwards;
+}
+
+.menu-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.menu-grid button{
+  background:linear-gradient(145deg,#6b1a2a,#561422);
+  border:none;
+  color:var(--text);
+  padding:18px 12px;
+  border-radius:16px;
+  font-size:14px;
+}
+
+.back{
+  margin-bottom:15px;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(10px);}
+  to{opacity:1;transform:translateY(0);}
+}
+</style>
 </head>
 <body>
 
-<!-- SPLASH -->
-<div id="splash">
-  <img src="logo.png" alt="Зира">
+<!-- HOME -->
+<div class="home-screen" id="home">
+  <img src="logo.png" class="logo" id="logo">
+  <div class="title">ЗИРА — китайская кухня</div>
+  <button class="btn" id="menuBtn">Меню</button>
+  <button class="btn" id="aboutBtn">О нас</button>
+  <br><br>
+  <input type="file" id="logoUpload" accept="image/*">
 </div>
 
-<!-- HEADER -->
-<header class="header">
-  <img src="logo.png" class="logo" id="headerLogo" alt="Зира">
-  <div class="nav">
-    <button id="menuBtn">Меню</button>
-    <button id="aboutBtn">О нас</button>
+<!-- MENU -->
+<div class="menu-screen" id="menu">
+  <button class="btn back" id="backBtn">← Назад</button>
+
+  <div class="menu-grid">
+    <button>🔥 Свинина</button>
+    <button>🔥 Говядина</button>
+    <button>🔥 Курица</button>
+    <button>🍚 Гарниры</button>
+    <button>🐟 Рыба</button>
+    <button>🥘 На чугуне</button>
+    <button>🍜 Супы</button>
+    <button>🥗 Салаты</button>
   </div>
-</header>
-
-<!-- MAIN -->
-<main class="content">
-
-  <!-- HOME -->
-  <section id="home">
-    <h1>ЗИРА — китайская кухня</h1>
-    <p>Пряные блюда с настоящим восточным характером</p>
-  </section>
-
-  <!-- MENU -->
-  <section id="menu" class="hidden">
-    <div class="menu-grid">
-      <button>🔥 Горячее · Свинина</button>
-      <button>🔥 Горячее · Говядина</button>
-      <button>🔥 Горячее · Курица</button>
-      <button>🍚 Горячие гарниры</button>
-      <button>🐟 Рыба и морепродукты</button>
-      <button>🥘 Блюда на чугуне</button>
-      <button>🍜 Супы</button>
-      <button>🥗 Салаты</button>
-    </div>
-  </section>
-
-  <!-- ABOUT -->
-  <section id="about" class="hidden">
-    <h2>О нас</h2>
-    <p>
-      ЗИРА — это китайская кухня с насыщенными специями,
-      ярким вкусом и настоящим восточным характером.
-    </p>
-  </section>
-
-</main>
+</div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+const home = document.getElementById("home");
+const menu = document.getElementById("menu");
+const logo = document.getElementById("logo");
 
-  const splash = document.getElementById("splash");
-  const home = document.getElementById("home");
-  const menu = document.getElementById("menu");
-  const about = document.getElementById("about");
-  const logo = document.getElementById("headerLogo");
+document.getElementById("menuBtn").addEventListener("click", () => {
+  logo.classList.add("spin");
+  setTimeout(() => {
+    home.classList.add("hidden");
+    menu.style.display = "block";
+    logo.classList.remove("spin");
+  }, 400);
+});
 
-  // Убираем splash
-  if (splash) {
-    setTimeout(() => {
-      splash.style.display = "none";
-    }, 600);
+document.getElementById("backBtn").addEventListener("click", () => {
+  menu.style.display = "none";
+  home.classList.remove("hidden");
+});
+
+/* Смена логотипа */
+document.getElementById("logoUpload").addEventListener("change", function(e){
+  const file = e.target.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = function(evt){
+      logo.src = evt.target.result;
+      localStorage.setItem("ziraLogo", evt.target.result);
+    };
+    reader.readAsDataURL(file);
   }
+});
 
-  // Кнопка МЕНЮ
-  document.getElementById("menuBtn").addEventListener("click", function () {
-
-    if (logo) logo.classList.add("spin");
-
-    setTimeout(() => {
-      home.classList.add("hidden");
-      about.classList.add("hidden");
-      menu.classList.remove("hidden");
-      if (logo) logo.classList.remove("spin");
-    }, 400);
-  });
-
-  // Кнопка О НАС
-  document.getElementById("aboutBtn").addEventListener("click", function () {
-
-    if (logo) logo.classList.add("spin");
-
-    setTimeout(() => {
-      home.classList.add("hidden");
-      menu.classList.add("hidden");
-      about.classList.remove("hidden");
-      if (logo) logo.classList.remove("spin");
-    }, 400);
-  });
-
+/* Загружаем сохранённый логотип */
+window.addEventListener("load", () => {
+  const saved = localStorage.getItem("ziraLogo");
+  if(saved){
+    logo.src = saved;
+  }
 });
 </script>
 
 </body>
-</html>
-
 </html>
