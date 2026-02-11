@@ -3,106 +3,284 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zira Premium</title>
+<title>Zira Premium Restaurant</title>
 
 <style>
-:root{
-  --bg:#3b0d16;
-  --card:#6b1a2a;
-  --accent:#d94b4b;
-  --text:#f5e9e4;
+:root {
+  --bg: #3b0d16;
+  --card: #6b1a2a;
+  --accent: #d94b4b;
+  --text: #f5e9e4;
+  --gold: #d4af37;
+  --light-bg: #4a1520;
 }
 
-*{
-  box-sizing:border-box;
-  font-family:system-ui,-apple-system;
-  transition:0.3s ease;
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  transition: 0.3s ease;
 }
 
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-  text-align:center;
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
 }
 
 /* MAIN */
-.container{
-  width:100%;
-  max-width:420px;
-  padding:20px;
+.container {
+  width: 100%;
+  max-width: 480px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 24px;
+  padding: 25px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
 }
 
 /* LOGO */
-.logo-wrapper{
-  margin-bottom:15px;
+.logo-wrapper {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.logo{
-  width:130px;
-  height:130px;
-  object-fit:contain;
-  border-radius:50%;
-  cursor:pointer;
-  box-shadow:0 0 25px rgba(217,75,75,0.4);
+.logo {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(217, 75, 75, 0.5);
+  border: 3px solid var(--gold);
+  padding: 5px;
+  background: var(--card);
 }
 
-.logo:hover{
-  transform:scale(1.05);
+.logo:hover {
+  transform: scale(1.05) rotate(5deg);
+  box-shadow: 0 0 40px rgba(217, 75, 75, 0.7);
+}
+
+.logo-text {
+  margin-top: 10px;
+  font-size: 14px;
+  color: rgba(245, 233, 228, 0.7);
 }
 
 /* TITLE */
-.title{
-  font-size:28px;
-  font-weight:600;
-  margin-bottom:25px;
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+  position: relative;
+  display: inline-block;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 25%;
+  width: 50%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
 }
 
 /* BUTTONS */
-.buttons{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-button{
-  padding:14px;
-  border:none;
-  border-radius:14px;
-  font-size:16px;
-  background:linear-gradient(145deg,#6b1a2a,#561422);
-  color:var(--text);
-  cursor:pointer;
+button {
+  padding: 16px 24px;
+  border: none;
+  border-radius: 16px;
+  font-size: 17px;
+  font-weight: 600;
+  background: linear-gradient(145deg, #6b1a2a, #561422);
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
 }
 
-button:hover{
-  background:var(--accent);
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: 0.5s;
+}
+
+button:hover::before {
+  left: 100%;
+}
+
+button:hover {
+  background: linear-gradient(145deg, #7a1e30, #651828);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
 /* MENU CATEGORIES */
-.menu-categories{
-  display:none;
-  flex-direction:column;
-  gap:12px;
+.menu-categories, .dishes-list, .dish-detail, .about-content {
+  display: none;
+  flex-direction: column;
+  gap: 15px;
+  animation: fadeIn 0.5s;
 }
 
-.show{
-  display:flex;
+.show {
+  display: flex;
+}
+
+.dishes-list button, .dish-detail button {
+  text-align: left;
+  padding: 14px 20px;
+}
+
+/* DISH DETAIL */
+.dish-detail {
+  background: var(--light-bg);
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 10px;
+}
+
+.dish-title {
+  font-size: 24px;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+.dish-description {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.dish-price {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: right;
+}
+
+/* ABOUT CONTENT */
+.about-content {
+  background: var(--light-bg);
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 10px;
+  text-align: left;
+}
+
+.about-title {
+  font-size: 22px;
+  color: var(--gold);
+  margin-bottom: 15px;
+}
+
+.about-text {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.about-features {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.about-features li {
+  padding: 8px 0;
+  position: relative;
+  padding-left: 30px;
+}
+
+.about-features li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: bold;
 }
 
 /* BACK BUTTON */
-.back{
-  margin-top:20px;
-  background:#222;
+.back {
+  margin-top: 20px;
+  background: linear-gradient(145deg, #333, #222);
+}
+
+.back:hover {
+  background: linear-gradient(145deg, #444, #333);
+}
+
+/* ANIMATION */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* FOOTER */
+.footer {
+  margin-top: 30px;
+  font-size: 14px;
+  color: rgba(245, 233, 228, 0.5);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 15px;
 }
 
 /* FILE INPUT hidden */
-#logoInput{
-  display:none;
+#logoInput {
+  display: none;
+}
+
+/* RESPONSIVE */
+@media (max-width: 500px) {
+  .container {
+    padding: 20px;
+  }
+  
+  .logo {
+    width: 130px;
+    height: 130px;
+  }
+  
+  .title {
+    font-size: 28px;
+  }
+  
+  button {
+    padding: 14px 20px;
+    font-size: 16px;
+  }
 }
 </style>
 </head>
@@ -112,67 +290,265 @@ button:hover{
 
   <!-- LOGO -->
   <div class="logo-wrapper">
-    <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png" class="logo" id="logo">
+    <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png" class="logo" id="logo" alt="Zira Restaurant Logo">
     <input type="file" id="logoInput" accept="image/*">
+    <div class="logo-text">Нажмите для смены логотипа</div>
   </div>
 
   <!-- TITLE -->
   <div class="title">ZIRA RESTAURANT</div>
 
   <!-- MAIN BUTTONS -->
-  <div class="buttons" id="mainButtons">
-    <button onclick="openMenu()">Меню</button>
-    <button onclick="openAbout()">О нас</button>
+  <div class="buttons show" id="mainButtons">
+    <button onclick="openMenu()">🍽️ Меню</button>
+    <button onclick="openAbout()">ℹ️ О нас</button>
+    <button onclick="openReservation()">📅 Забронировать столик</button>
   </div>
 
-  <!-- MENU -->
+  <!-- MENU CATEGORIES -->
   <div class="menu-categories" id="menuBlock">
-    <button>🥩 Горячие блюда</button>
-    <button>🥗 Салаты</button>
-    <button>🥤 Напитки</button>
-    <button>🍰 Десерты</button>
-    <button class="back" onclick="goBack()">Назад</button>
+    <button onclick="openCategory('hot')">🥩 Горячие блюда</button>
+    <button onclick="openCategory('salads')">🥗 Салаты</button>
+    <button onclick="openCategory('drinks')">🥤 Напитки</button>
+    <button onclick="openCategory('desserts')">🍰 Десерты</button>
+    <button class="back" onclick="goBack()">← Назад</button>
   </div>
 
+  <!-- DISHES LIST -->
+  <div class="dishes-list" id="dishesBlock">
+    <!-- Dishes will be loaded here dynamically -->
+    <button class="back" onclick="goBackToCategories()">← Назад к категориям</button>
+  </div>
+
+  <!-- DISH DETAIL -->
+  <div class="dish-detail" id="dishDetail">
+    <!-- Dish detail will be loaded here dynamically -->
+    <button class="back" onclick="goBackToDishes()">← Назад к блюдам</button>
+  </div>
+
+  <!-- ABOUT CONTENT -->
+  <div class="about-content" id="aboutBlock">
+    <div class="about-title">ZIRA — ресторан восточной кухни</div>
+    <div class="about-text">С 2010 года мы радуем гостей аутентичными блюдами Востока, приготовленными по традиционным рецептам с использованием современных технологий.</div>
+    <div class="about-text">Наши повара — мастера своего дела, прошедшие обучение у лучших шеф-поваров Узбекистана, Турции и Ирана.</div>
+    
+    <ul class="about-features">
+      <li>Свежие продукты от проверенных поставщиков</li>
+      <li>Настоящий вкус восточных специй</li>
+      <li>Уютная атмосфера с восточным колоритом</li>
+      <li>Живая национальная музыка по выходным</li>
+      <li>Веранда с видом на город</li>
+    </ul>
+    
+    <div class="about-text"><strong>Часы работы:</strong> ежедневно с 11:00 до 23:00</div>
+    <div class="about-text"><strong>Адрес:</strong> ул. Восточная, 15</div>
+    <div class="about-text"><strong>Телефон:</strong> +7 (495) 123-45-67</div>
+    
+    <button class="back" onclick="goBack()">← Назад</button>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    © 2023 ZIRA Restaurant. Все права защищены.
+  </div>
 </div>
 
 <script>
+// Menu data
+const menuData = {
+  hot: [
+    { 
+      name: "Плов с бараниной", 
+      description: "Традиционный узбекский плов с нежной бараниной, морковью, луком и специями. Готовится в казане на открытом огне.", 
+      price: "850 ₽" 
+    },
+    { 
+      name: "Манты с говядиной", 
+      description: "Нежные пельмени из тонкого теста с сочной начинкой из говядины и лука. Подаются со сметаной и зеленью.", 
+      price: "720 ₽" 
+    },
+    { 
+      name: "Люля-кебаб из ягненка", 
+      description: "Шашлык из рубленого мяса молодого ягненка с луком и специями. Подается с лепешкой и овощами гриль.", 
+      price: "780 ₽" 
+    },
+    { 
+      name: "Шурпа из баранины", 
+      description: "Наваристый суп из баранины с картофелем, морковью, луком и пряностями. Подается в глиняном горшочке.", 
+      price: "650 ₽" 
+    }
+  ],
+  salads: [
+    { 
+      name: "Салат из свежих овощей", 
+      description: "Сезонные овощи с зеленью, заправленные оливковым маслом и лимонным соком.", 
+      price: "420 ₽" 
+    },
+    { 
+      name: "Греческий салат", 
+      description: "Классический салат с помидорами, огурцами, сладким перцем, луком, оливками и сыром фета.", 
+      price: "480 ₽" 
+    },
+    { 
+      name: "Салат с козьим сыром", 
+      description: "Свежая зелень, козий сыр, груша и грецкие орехи с медовой заправкой.", 
+      price: "550 ₽" 
+    }
+  ],
+  drinks: [
+    { 
+      name: "Чай каркаде", 
+      description: "Традиционный восточный напиток из цветков суданской розы. Подается горячим или холодным.", 
+      price: "250 ₽" 
+    },
+    { 
+      name: "Айран", 
+      description: "Освежающий кисломолочный напиток с легкой солоноватой ноткой.", 
+      price: "180 ₽" 
+    },
+    { 
+      name: "Гранатовый сок", 
+      description: "Натуральный свежевыжатый гранатовый сок.", 
+      price: "320 ₽" 
+    },
+    { 
+      name: "Классический лимонад", 
+      description: "Домашний лимонад с мятой и лаймом.", 
+      price: "280 ₽" 
+    }
+  ],
+  desserts: [
+    { 
+      name: "Пахлава", 
+      description: "Слоеный десерт из тонкого теста с орехами и медовой пропиткой.", 
+      price: "350 ₽" 
+    },
+    { 
+      name: "Чизкейк Нью-Йорк", 
+      description: "Классический чизкейк с нежной творожной текстурой на песочной основе.", 
+      price: "420 ₽" 
+    },
+    { 
+      name: "Мороженое с фисташками", 
+      description: "Домашнее мороженое с фисташками и карамельным соусом.", 
+      price: "380 ₽" 
+    }
+  ]
+};
+
+// Current state
+let currentCategory = '';
 
 /* Меню */
-function openMenu(){
-  document.getElementById('mainButtons').style.display = "none";
+function openMenu() {
+  document.getElementById('mainButtons').classList.remove("show");
   document.getElementById('menuBlock').classList.add("show");
 }
 
-function goBack(){
+function goBack() {
   document.getElementById('menuBlock').classList.remove("show");
-  document.getElementById('mainButtons').style.display = "flex";
+  document.getElementById('dishesBlock').classList.remove("show");
+  document.getElementById('dishDetail').classList.remove("show");
+  document.getElementById('aboutBlock').classList.remove("show");
+  document.getElementById('mainButtons').classList.add("show");
 }
 
-function openAbout(){
-  alert("ZIRA — ресторан восточной кухни.\nСвежие продукты. Настоящий вкус.");
+function openCategory(category) {
+  currentCategory = category;
+  const dishesBlock = document.getElementById('dishesBlock');
+  const menuBlock = document.getElementById('menuBlock');
+  
+  // Clear previous dishes
+  dishesBlock.innerHTML = '';
+  
+  // Add dishes for the selected category
+  menuData[category].forEach((dish, index) => {
+    const dishButton = document.createElement('button');
+    dishButton.textContent = dish.name;
+    dishButton.onclick = () => openDishDetail(index);
+    dishesBlock.appendChild(dishButton);
+  });
+  
+  // Add back button
+  const backButton = document.createElement('button');
+  backButton.textContent = '← Назад к категориям';
+  backButton.className = 'back';
+  backButton.onclick = goBackToCategories;
+  dishesBlock.appendChild(backButton);
+  
+  // Show dishes block
+  menuBlock.classList.remove("show");
+  dishesBlock.classList.add("show");
+}
+
+function goBackToCategories() {
+  document.getElementById('dishesBlock').classList.remove("show");
+  document.getElementById('dishDetail').classList.remove("show");
+  document.getElementById('menuBlock').classList.add("show");
+}
+
+function openDishDetail(dishIndex) {
+  const dish = menuData[currentCategory][dishIndex];
+  const dishDetail = document.getElementById('dishDetail');
+  
+  dishDetail.innerHTML = `
+    <div class="dish-title">${dish.name}</div>
+    <div class="dish-description">${dish.description}</div>
+    <div class="dish-price">${dish.price}</div>
+    <button class="back" onclick="goBackToDishes()">← Назад к блюдам</button>
+  `;
+  
+  document.getElementById('dishesBlock').classList.remove("show");
+  dishDetail.classList.add("show");
+}
+
+function goBackToDishes() {
+  document.getElementById('dishDetail').classList.remove("show");
+  document.getElementById('dishesBlock').classList.add("show");
+}
+
+function openAbout() {
+  document.getElementById('mainButtons').classList.remove("show");
+  document.getElementById('aboutBlock').classList.add("show");
+}
+
+function openReservation() {
+  alert("Для бронирования столика позвоните по телефону +7 (495) 123-45-67 или оставьте заявку на нашем сайте.");
 }
 
 /* Смена логотипа */
 const logo = document.getElementById("logo");
 const input = document.getElementById("logoInput");
 
-logo.addEventListener("click", ()=>{
+logo.addEventListener("click", () => {
   input.click();
 });
 
-input.addEventListener("change", function(){
+input.addEventListener("change", function() {
   const file = this.files[0];
-  if(file){
+  if (file) {
     const reader = new FileReader();
-    reader.onload = function(e){
+    reader.onload = function(e) {
       logo.src = e.target.result;
     }
     reader.readAsDataURL(file);
   }
 });
 
+// Add some interactive effects
+document.addEventListener('DOMContentLoaded', function() {
+  // Add hover effect to buttons
+  const buttons = document.querySelectorAll('button');
+  buttons.forEach(button => {
+    button.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-2px)';
+    });
+    
+    button.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0)';
+    });
+  });
+});
 </script>
-
 </body>
 </html>
