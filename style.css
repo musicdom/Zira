@@ -1,0 +1,90 @@
+:root {
+  --bg: #3b0d16;
+  --card: #6b1a2a;
+  --accent: #d94b4b;
+  --text: #f5e9e4;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* SPLASH */
+#splash {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+#splash img {
+  width: 140px;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  gap: 12px;
+}
+
+.logo {
+  width: 44px;
+  height: 44px;
+  transition: transform 0.6s ease;
+}
+
+.logo.spin {
+  transform: rotate(360deg) scale(1.1);
+}
+
+.nav {
+  display: flex;
+  gap: 8px;
+}
+
+.nav button {
+  background: var(--card);
+  color: var(--text);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+/* CONTENT */
+.content {
+  padding: 16px;
+}
+
+.hidden {
+  display: none;
+}
+
+/* MENU GRID */
+.menu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.menu-grid button {
+  background: linear-gradient(145deg, #6b1a2a, #561422);
+  color: var(--text);
+  border: none;
+  padding: 18px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  text-align: center;
+}
