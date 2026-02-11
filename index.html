@@ -3,173 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ЗИРА — китайская кухня</title>
+<title>Zira Premium</title>
 
 <style>
-:root {
+:root{
   --bg:#3b0d16;
   --card:#6b1a2a;
+  --accent:#d94b4b;
   --text:#f5e9e4;
 }
 
 *{
   box-sizing:border-box;
   font-family:system-ui,-apple-system;
+  transition:0.3s ease;
 }
 
 body{
   margin:0;
   background:var(--bg);
   color:var(--text);
-  overflow-x:hidden;
-}
-
-/* CENTER HOME SCREEN */
-.home-screen{
-  height:100vh;
   display:flex;
-  flex-direction:column;
-  align-items:center;
   justify-content:center;
+  align-items:center;
+  height:100vh;
   text-align:center;
-  padding:20px;
-  transition:opacity .4s ease, transform .4s ease;
 }
 
-.home-screen.hidden{
-  opacity:0;
-  transform:translateY(-20px);
-  pointer-events:none;
+/* MAIN */
+.container{
+  width:100%;
+  max-width:420px;
+  padding:20px;
 }
 
 /* LOGO */
-.logo{
-  width:160px;
-  margin-bottom:20px;
-  transition:transform .4s ease;
+.logo-wrapper{
+  margin-bottom:15px;
 }
 
-.logo.spin{
-  transform:rotate(360deg) scale(1.05);
+.logo{
+  width:130px;
+  height:130px;
+  object-fit:contain;
+  border-radius:50%;
+  cursor:pointer;
+  box-shadow:0 0 25px rgba(217,75,75,0.4);
+}
+
+.logo:hover{
+  transform:scale(1.05);
 }
 
 /* TITLE */
 .title{
-  font-size:22px;
+  font-size:28px;
+  font-weight:600;
   margin-bottom:25px;
 }
 
 /* BUTTONS */
-.btn{
-  background:linear-gradient(145deg,#6b1a2a,#561422);
-  border:none;
-  color:var(--text);
-  padding:14px 22px;
-  border-radius:14px;
-  margin:8px;
-  font-size:16px;
-  width:200px;
-}
-
-/* MENU SCREEN */
-.menu-screen{
-  padding:20px;
-  display:none;
-  animation:fadeIn .4s ease forwards;
-}
-
-.menu-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
+.buttons{
+  display:flex;
+  flex-direction:column;
   gap:12px;
 }
 
-.menu-grid button{
-  background:linear-gradient(145deg,#6b1a2a,#561422);
+button{
+  padding:14px;
   border:none;
+  border-radius:14px;
+  font-size:16px;
+  background:linear-gradient(145deg,#6b1a2a,#561422);
   color:var(--text);
-  padding:18px 12px;
-  border-radius:16px;
-  font-size:14px;
+  cursor:pointer;
 }
 
+button:hover{
+  background:var(--accent);
+}
+
+/* MENU CATEGORIES */
+.menu-categories{
+  display:none;
+  flex-direction:column;
+  gap:12px;
+}
+
+.show{
+  display:flex;
+}
+
+/* BACK BUTTON */
 .back{
-  margin-bottom:15px;
+  margin-top:20px;
+  background:#222;
 }
 
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(10px);}
-  to{opacity:1;transform:translateY(0);}
+/* FILE INPUT hidden */
+#logoInput{
+  display:none;
 }
 </style>
 </head>
 <body>
 
-<!-- HOME -->
-<div class="home-screen" id="home">
-  <img src="logo.png" class="logo" id="logo">
-  <div class="title">ЗИРА — китайская кухня</div>
-  <button class="btn" id="menuBtn">Меню</button>
-  <button class="btn" id="aboutBtn">О нас</button>
-  <br><br>
-  <input type="file" id="logoUpload" accept="image/*">
-</div>
+<div class="container">
 
-<!-- MENU -->
-<div class="menu-screen" id="menu">
-  <button class="btn back" id="backBtn">← Назад</button>
-
-  <div class="menu-grid">
-    <button>🔥 Свинина</button>
-    <button>🔥 Говядина</button>
-    <button>🔥 Курица</button>
-    <button>🍚 Гарниры</button>
-    <button>🐟 Рыба</button>
-    <button>🥘 На чугуне</button>
-    <button>🍜 Супы</button>
-    <button>🥗 Салаты</button>
+  <!-- LOGO -->
+  <div class="logo-wrapper">
+    <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png" class="logo" id="logo">
+    <input type="file" id="logoInput" accept="image/*">
   </div>
+
+  <!-- TITLE -->
+  <div class="title">ZIRA RESTAURANT</div>
+
+  <!-- MAIN BUTTONS -->
+  <div class="buttons" id="mainButtons">
+    <button onclick="openMenu()">Меню</button>
+    <button onclick="openAbout()">О нас</button>
+  </div>
+
+  <!-- MENU -->
+  <div class="menu-categories" id="menuBlock">
+    <button>🥩 Горячие блюда</button>
+    <button>🥗 Салаты</button>
+    <button>🥤 Напитки</button>
+    <button>🍰 Десерты</button>
+    <button class="back" onclick="goBack()">Назад</button>
+  </div>
+
 </div>
 
 <script>
-const home = document.getElementById("home");
-const menu = document.getElementById("menu");
-const logo = document.getElementById("logo");
 
-document.getElementById("menuBtn").addEventListener("click", () => {
-  logo.classList.add("spin");
-  setTimeout(() => {
-    home.classList.add("hidden");
-    menu.style.display = "block";
-    logo.classList.remove("spin");
-  }, 400);
-});
+/* Меню */
+function openMenu(){
+  document.getElementById('mainButtons').style.display = "none";
+  document.getElementById('menuBlock').classList.add("show");
+}
 
-document.getElementById("backBtn").addEventListener("click", () => {
-  menu.style.display = "none";
-  home.classList.remove("hidden");
-});
+function goBack(){
+  document.getElementById('menuBlock').classList.remove("show");
+  document.getElementById('mainButtons').style.display = "flex";
+}
+
+function openAbout(){
+  alert("ZIRA — ресторан восточной кухни.\nСвежие продукты. Настоящий вкус.");
+}
 
 /* Смена логотипа */
-document.getElementById("logoUpload").addEventListener("change", function(e){
-  const file = e.target.files[0];
+const logo = document.getElementById("logo");
+const input = document.getElementById("logoInput");
+
+logo.addEventListener("click", ()=>{
+  input.click();
+});
+
+input.addEventListener("change", function(){
+  const file = this.files[0];
   if(file){
     const reader = new FileReader();
-    reader.onload = function(evt){
-      logo.src = evt.target.result;
-      localStorage.setItem("ziraLogo", evt.target.result);
-    };
+    reader.onload = function(e){
+      logo.src = e.target.result;
+    }
     reader.readAsDataURL(file);
   }
 });
 
-/* Загружаем сохранённый логотип */
-window.addEventListener("load", () => {
-  const saved = localStorage.getItem("ziraLogo");
-  if(saved){
-    logo.src = saved;
-  }
-});
 </script>
 
 </body>
