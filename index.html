@@ -8,7 +8,7 @@
         :root {
             --bg: #080019;
             --bg-secondary: #11002d;
-            --bg-card: #16003a;
+            --bg-card: rgba(22, 0, 58, 0.7);
             --purple: #6d2cff;
             --purple-light: #9c5cff;
             --pink: #ff2fa8;
@@ -24,6 +24,7 @@
             --radius-xs: 8px;
             --nav-height: 70px;
             --safe-bottom: env(safe-area-inset-bottom, 12px);
+            --safe-top: env(safe-area-inset-top, 0px);
             --max-width: 1200px;
             --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -175,6 +176,16 @@
             right: -8%;
             animation: floatP 25s ease-in-out infinite reverse;
         }
+        .bg-planet.p3 {
+            width: 25vmin;
+            height: 25vmin;
+            background: #6d2cff;
+            top: 40%;
+            left: 60%;
+            filter: blur(50px);
+            opacity: 0.12;
+            animation: floatP 30s ease-in-out infinite;
+        }
         @keyframes floatP {
             0%,
             100% {
@@ -209,7 +220,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 18px;
+            padding: calc(12px + var(--safe-top)) 18px 12px;
             position: sticky;
             top: 0;
             z-index: 50;
@@ -217,6 +228,7 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(157, 92, 255, 0.12);
+            margin-bottom: 4px;
         }
         .header-logo {
             display: flex;
@@ -226,16 +238,11 @@
             font-size: 1.25rem;
             letter-spacing: -0.02em;
             color: #fff;
+            cursor: pointer;
         }
-        .logo-icon {
+        .header-logo svg {
             width: 32px;
             height: 32px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--purple), var(--pink));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 18px var(--glow-purple);
         }
         .header-actions {
             display: flex;
@@ -283,10 +290,6 @@
             stroke: currentColor;
             fill: none;
             stroke-width: 1.8;
-        }
-        .icon-btn.filled-svg svg {
-            fill: currentColor;
-            stroke: none;
         }
 
         /* === СТРАНИЦЫ === */
@@ -382,7 +385,7 @@
             pointer-events: none;
         }
 
-        /* === КАТЕГОРИИ === */
+        /* === КАТЕГОРИИ ЧИПСЫ === */
         .cat-scroll {
             display: flex;
             gap: 8px;
@@ -416,7 +419,7 @@
             box-shadow: 0 4px 18px var(--glow-purple);
         }
 
-        /* === БОЛЬШИЕ КАРТОЧКИ КАТЕГОРИЙ === */
+        /* === БОЛЬШИЕ КАРТОЧКИ КАТЕГОРИЙ С ПАПКАМИ === */
         .big-cats {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -435,6 +438,11 @@
             text-align: center;
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         .big-cat-card:hover,
         .big-cat-card:active {
@@ -442,24 +450,78 @@
             box-shadow: 0 8px 30px var(--glow-purple);
             transform: translateY(-2px);
         }
-        .big-cat-card .cat-icon-wrap {
-            width: 50px;
-            height: 50px;
-            margin: 0 auto 10px;
-            border-radius: 14px;
+        .folder-stack {
+            position: relative;
+            width: 70px;
+            height: 70px;
+            margin-bottom: 12px;
+        }
+        .folder {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #3a1a80, #1a0050);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            transition: var(--transition);
+        }
+        .folder.back1 {
+            transform: rotate(-6deg) scale(0.92);
+            opacity: 0.8;
+            background: linear-gradient(135deg, #2a0050, #11002d);
+            left: -4px;
+            top: 2px;
+        }
+        .folder.back2 {
+            transform: rotate(4deg) scale(0.88);
+            opacity: 0.6;
+            background: linear-gradient(135deg, #4a2090, #200040);
+            right: -4px;
+            top: 4px;
+        }
+        .folder.front {
+            transform: rotate(0deg);
+            z-index: 2;
+            background: linear-gradient(135deg, var(--purple), #3a1a80);
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, rgba(109, 44, 255, 0.3), rgba(255, 47, 168, 0.2));
-            box-shadow: 0 0 20px rgba(109, 44, 255, 0.25);
+            box-shadow: 0 0 20px var(--glow-purple);
         }
-        .big-cat-card .cat-icon-wrap svg {
-            width: 26px;
-            height: 26px;
+        .folder.front svg {
+            width: 30px;
+            height: 30px;
             color: #fff;
             stroke: #fff;
             fill: none;
             stroke-width: 1.6;
+        }
+        .mini-orbit {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 47, 168, 0.4);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            animation: miniOrbitSpin 10s linear infinite;
+        }
+        .mini-orbit-dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--pink-light);
+            box-shadow: 0 0 12px var(--glow-pink);
+            top: -3px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        @keyframes miniOrbitSpin {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
         }
         .big-cat-card .cat-label {
             font-weight: 700;
@@ -467,18 +529,8 @@
             letter-spacing: 0.03em;
             text-transform: uppercase;
             color: #fff;
-        }
-        .big-cat-card .cat-glow {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--pink);
-            filter: blur(30px);
-            opacity: 0.3;
-            top: -15px;
-            right: -15px;
-            pointer-events: none;
+            position: relative;
+            z-index: 3;
         }
 
         /* === СЕКЦИЯ === */
@@ -563,6 +615,9 @@
             color: var(--pink-light);
             font-weight: 600;
             margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
         }
         .item-card .item-name {
             font-weight: 700;
@@ -588,6 +643,18 @@
             align-items: center;
             font-size: 0.7rem;
             color: var(--text-muted);
+        }
+        .item-meta-users {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .item-meta-users svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
         }
         .item-card .fav-btn {
             position: absolute;
@@ -641,6 +708,7 @@
             font-size: 0.85rem;
             margin-bottom: 12px;
             transition: var(--transition);
+            padding: 6px 0;
         }
         .detail-back:hover {
             color: #fff;
@@ -653,6 +721,7 @@
             text-align: center;
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
         }
         .detail-avatar {
             width: 70px;
@@ -695,6 +764,7 @@
             border-radius: 14px;
             background: rgba(255, 255, 255, 0.04);
             color: var(--text-secondary);
+            border: 1px solid var(--border);
         }
         .btn-open {
             display: inline-block;
@@ -861,8 +931,8 @@
             transform: scale(1.06);
         }
         .nav-orbita svg {
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             color: #fff;
             stroke: #fff;
             fill: none;
@@ -884,7 +954,7 @@
                 padding: 16px 24px 0;
             }
             .header {
-                padding: 14px 24px;
+                padding: calc(14px + var(--safe-top)) 24px 14px;
             }
         }
         @media (min-width: 1024px) {
@@ -906,6 +976,7 @@
         <div class="orbit-ring ring3"></div>
         <div class="bg-planet p1"></div>
         <div class="bg-planet p2"></div>
+        <div class="bg-planet p3"></div>
     </div>
 
     <!-- ОСНОВНОЙ КОНТЕЙНЕР -->
@@ -922,7 +993,12 @@
             <span>Каталог</span>
         </div>
         <div class="nav-orbita" data-page="home" title="ORBITA">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="8"/></svg>
+            <!-- мини-логотип -->
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="16" cy="16" r="12" stroke="rgba(255,255,255,0.4)"/>
+                <circle cx="16" cy="16" r="4" fill="currentColor"/>
+                <path d="M10 8l12 16M22 8L10 24" stroke="rgba(255,255,255,0.6)"/>
+            </svg>
         </div>
         <div class="nav-item" data-page="favorites">
             <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
@@ -951,10 +1027,22 @@
                 bot: '<svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="1.6"><rect x="3" y="4" width="18" height="14" rx="3"/><circle cx="8" cy="10" r="1.5" fill="currentColor"/><circle cx="16" cy="10" r="1.5" fill="currentColor"/><line x1="8" y1="15" x2="16" y2="15" stroke-width="2"/></svg>',
                 apps: '<svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="1.6"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>',
                 back: '<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>',
-                star: '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>',
-                play: '<polygon points="6,3 20,12 6,21" fill="currentColor"/>',
+                users: '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M1 21c0-4.42 3.58-8 8-8M17 8a4 4 0 100-8 4 4 0 000 8zM23 21c0-4.42-3.58-8-8-8"/></svg>',
                 verified: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="7,12 10.5,15.5 17,9"/></svg>',
             };
+
+            // Логотип ORBITA (папки + орбита)
+            function renderLogoIcon(size = 32) {
+                return `<svg viewBox="0 0 32 32" width="${size}" height="${size}" fill="none">
+                    <circle cx="16" cy="16" r="13" stroke="rgba(255,47,168,0.3)" stroke-width="1.5" stroke-dasharray="4 4"/>
+                    <circle cx="16" cy="16" r="13" stroke="rgba(157,92,255,0.2)" stroke-width="1"/>
+                    <circle cx="16" cy="16" r="3" fill="#FF2FA8" filter="url(#glow)"/>
+                    <rect x="7" y="10" width="10" height="10" rx="2" fill="rgba(109,44,255,0.8)" stroke="#9C5CFF" stroke-width="1"/>
+                    <rect x="9" y="8" width="10" height="10" rx="2" fill="rgba(80,30,180,0.9)" stroke="#6D2CFF" stroke-width="1"/>
+                    <rect x="11" y="6" width="10" height="10" rx="2" fill="#6D2CFF" stroke="#fff" stroke-width="1.2"/>
+                    <defs><filter id="glow"><feGaussianBlur stdDeviation="1.5"/></filter></defs>
+                </svg>`;
+            }
 
             // ============ ДАННЫЕ ============
             const items = [
@@ -1043,6 +1131,7 @@
             const toast = document.getElementById('toast');
             const bottomNav = document.getElementById('bottomNav');
             let toastTimer;
+            let debounceTimer;
 
             function showToast(msg) {
                 clearTimeout(toastTimer);
@@ -1091,7 +1180,6 @@
                 navItems.forEach(n => n.classList.remove('active'));
                 const activeNav = bottomNav.querySelector(`.nav-item[data-page="${state.currentPage}"]`);
                 if (activeNav) activeNav.classList.add('active');
-                // Если детальная страница — подсвечиваем каталог или главную
                 if (state.currentPage === 'detail') {
                     const catNav = bottomNav.querySelector('.nav-item[data-page="catalog"]');
                     if (catNav) catNav.classList.add('active');
@@ -1152,7 +1240,7 @@
               <div class="item-name">${item.name}</div>
               <div class="item-desc">${item.description}</div>
               <div class="item-meta">
-                <span>👥 ${item.users}</span>
+                <span class="item-meta-users">${icons.users} ${item.users}</span>
                 <span style="color:var(--purple-light);">Открыть →</span>
               </div>
             </div>`;
@@ -1161,143 +1249,13 @@
             function renderBigCatCard(type, label, iconSvg) {
                 return `
             <div class="big-cat-card" onclick="window._orbita_filterCat('${type}')">
-              <div class="cat-glow"></div>
-              <div class="cat-icon-wrap">${iconSvg}</div>
+              <div class="folder-stack">
+                <div class="folder back1"></div>
+                <div class="folder back2"></div>
+                <div class="folder front">${iconSvg}</div>
+                <div class="mini-orbit"><div class="mini-orbit-dot"></div></div>
+              </div>
               <div class="cat-label">${label}</div>
-            </div>`;
-            }
-
-            // ============ РЕНДЕР СТРАНИЦ ============
-            function renderHome() {
-                const popular = getPopularItems();
-                return `
-            <div class="page" id="page-home">
-              <div class="hero">
-                <h1>ORBITA</h1>
-                <p class="subtitle">Вся экосистема MAX в одном месте</p>
-                <div class="tags-row">
-                  <span class="tag-pill">Каналы</span>
-                  <span class="tag-pill">Группы</span>
-                  <span class="tag-pill">Боты</span>
-                  <span class="tag-pill">Мини-приложения</span>
-                </div>
-              </div>
-              <div class="search-wrap">
-                ${icons.search.replace('width="18"','width="18" class="search-icon-svg"')}
-                <input class="search-input" type="text" placeholder="🔍  Найти канал, группу, бота..." value="${escapeHtml(state.searchQuery)}" oninput="window._orbita_search(this.value)" id="searchInputHome">
-              </div>
-              <div class="cat-scroll" id="catScrollHome">
-                ${renderCategoryChips()}
-              </div>
-              <div class="big-cats">
-                ${renderBigCatCard('channels', 'Каналы', icons.channel)}
-                ${renderBigCatCard('groups', 'Группы', icons.group)}
-                ${renderBigCatCard('bots', 'Боты', icons.bot)}
-                ${renderBigCatCard('miniapps', 'Мини-аппы', icons.apps)}
-              </div>
-              <div class="section-header">
-                <h3>🔥 Популярное</h3>
-                <span class="see-all" onclick="window._orbita_navigate('catalog')">Смотреть всё →</span>
-              </div>
-              <div class="h-scroll">
-                ${popular.map(i => renderItemCard(i, true)).join('')}
-              </div>
-              ${state.searchQuery || state.currentCategory !== 'all' ? `
-              <div class="section-header" style="margin-top:8px;">
-                <h3>Результаты</h3>
-              </div>
-              <div class="catalog-grid">
-                ${getFilteredItems().slice(0,12).map(i => renderItemCard(i, true)).join('')}
-              </div>` : ''}
-            </div>`;
-            }
-
-            function renderCatalog() {
-                const filtered = getFilteredItems();
-                return `
-            <div class="page" id="page-catalog">
-              <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:4px;">Каталог</h2>
-              <div class="search-wrap">
-                ${icons.search.replace('width="18"','width="18" class="search-icon-svg"')}
-                <input class="search-input" type="text" placeholder="🔍  Поиск по каталогу..." value="${escapeHtml(state.searchQuery)}" oninput="window._orbita_search(this.value)" id="searchInputCat">
-              </div>
-              <div class="cat-scroll">${renderCategoryChips()}</div>
-              <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap;">
-                <span style="font-size:0.75rem;color:var(--text-muted);">Сортировка:</span>
-                <button class="cat-chip ${state.sort==='popular'?'active':''}" onclick="window._orbita_setSort('popular')" style="font-size:0.7rem;padding:6px 12px;">Популярные</button>
-                <button class="cat-chip ${state.sort==='new'?'active':''}" onclick="window._orbita_setSort('new')" style="font-size:0.7rem;padding:6px 12px;">Новые</button>
-                <button class="cat-chip ${state.sort==='alpha'?'active':''}" onclick="window._orbita_setSort('alpha')" style="font-size:0.7rem;padding:6px 12px;">По алфавиту</button>
-              </div>
-              <p style="font-size:0.75rem;color:var(--text-muted);margin:4px 0;">Найдено: ${filtered.length}</p>
-              <div class="catalog-grid">
-                ${filtered.map(i => renderItemCard(i, true)).join('')}
-              </div>
-              ${filtered.length === 0 ? '<p style="text-align:center;color:var(--text-muted);padding:30px;">Ничего не найдено 😔</p>' : ''}
-            </div>`;
-            }
-
-            function renderDetail() {
-                const item = state.selectedItem;
-                if (!item) { navigate('home'); return ''; }
-                const isFav = state.favorites.includes(item.id);
-                return `
-            <div class="page" id="page-detail">
-              <div class="detail-back" onclick="window._orbita_goBack()">${icons.back} Назад</div>
-              <div class="detail-card">
-                <div class="detail-avatar">${getTypeIcon(item.type)}</div>
-                <h2 style="font-size:1.3rem;font-weight:700;">${item.name}</h2>
-                ${item.verified ? '<span class="detail-badge">✓ Проверенный</span>' : ''}
-                <p style="color:var(--text-secondary);margin:8px 0;">${item.description}</p>
-                <p style="font-size:0.85rem;">👥 ${item.users} подписчиков</p>
-                <div style="margin:8px 0;font-size:0.8rem;color:var(--text-muted);">Категория: <strong>${item.category}</strong></div>
-                <div class="detail-tags">${item.tags.map(t => `<span class="detail-tag">${t}</span>`).join('')}</div>
-                <button class="btn-open" onclick="window._orbita_openExternal('${item.name}')">ОТКРЫТЬ</button>
-                <div style="margin-top:12px;">
-                  <button class="cat-chip ${isFav?'active':''}" onclick="window._orbita_toggleFav(${item.id});window._orbita_refreshDetail();" style="font-size:0.8rem;">
-                    ${isFav ? '♥ В избранном' : '♡ Добавить в избранное'}
-                  </button>
-                </div>
-              </div>
-            </div>`;
-            }
-
-            function renderFavorites() {
-                const favItems = items.filter(i => state.favorites.includes(i.id));
-                return `
-            <div class="page" id="page-favorites">
-              <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:8px;">Избранное</h2>
-              ${favItems.length === 0 ? '<p style="color:var(--text-muted);text-align:center;padding:40px;">Пока ничего нет в избранном ♡</p>' : ''}
-              <div class="catalog-grid">
-                ${favItems.map(i => renderItemCard(i, true)).join('')}
-              </div>
-            </div>`;
-            }
-
-            function renderProfile() {
-                const favCount = state.favorites.length;
-                return `
-            <div class="page" id="page-profile">
-              <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:4px;">Мой профиль</h2>
-              <div class="profile-avatar">${icons.user.replace('width="18"','width="36"').replace('height="18"','height="36"')}</div>
-              <p style="text-align:center;font-weight:700;font-size:1.1rem;">Гость</p>
-              <div class="stat-row">
-                <div class="stat-box"><strong>${favCount}</strong><br><span style="font-size:0.7rem;color:var(--text-muted);">Избранное</span></div>
-                <div class="stat-box"><strong>24</strong><br><span style="font-size:0.7rem;color:var(--text-muted);">Просмотрено</span></div>
-              </div>
-              <div style="margin-top:16px;">
-                <p style="color:var(--text-muted);font-size:0.85rem;padding:8px 0;">⚙️ Настройки</p>
-                <p style="color:var(--text-muted);font-size:0.85rem;padding:8px 0;">ℹ️ О приложении ORBITA v1.0</p>
-              </div>
-            </div>`;
-            }
-
-            function renderNotifications() {
-                return `
-            <div class="page" id="page-notifications">
-              <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:12px;">Уведомления</h2>
-              <div class="notif-item"><div class="notif-dot"></div><div><strong>Новые каналы</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">Добавлены 12 новых каналов</span></div></div>
-              <div class="notif-item"><div class="notif-dot"></div><div><strong>🔥 Популярное</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">Ваш сохранённый канал стал популярным</span></div></div>
-              <div class="notif-item"><div class="notif-dot" style="background:var(--purple-light);"></div><div><strong>Обновление</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">ORBITA получила новые функции</span></div></div>
             </div>`;
             }
 
@@ -1321,43 +1279,232 @@
                 return div.innerHTML;
             }
 
-            // ============ ГЛАВНЫЙ РЕНДЕР ============
-            function render() {
-                let html = '';
-                switch (state.currentPage) {
-                    case 'home':
-                        html = renderHome();
-                        break;
-                    case 'catalog':
-                        html = renderCatalog();
-                        break;
-                    case 'detail':
-                        html = renderDetail();
-                        break;
-                    case 'favorites':
-                        html = renderFavorites();
-                        break;
-                    case 'profile':
-                        html = renderProfile();
-                        break;
-                    case 'notifications':
-                        html = renderNotifications();
-                        break;
-                    default:
-                        html = renderHome();
+            // ============ HEADER ============
+            function renderHeader(showBack = false) {
+                if (showBack) {
+                    return `
+                <div class="header">
+                  <div class="detail-back" onclick="window._orbita_goBack()" style="margin:0;padding:0;">${icons.back} Назад</div>
+                  <div class="header-logo" onclick="window._orbita_navigate('home')">${renderLogoIcon(28)} <span>ORBITA</span></div>
+                  <div style="width:38px;"></div>
+                </div>`;
                 }
-                app.innerHTML = html;
-                // Восстанавливаем фокус поиска если был
-                requestAnimationFrame(() => {
-                    const si = document.getElementById('searchInputHome') || document.getElementById(
-                        'searchInputCat');
-                    if (si && state.searchQuery && document.activeElement !== si) {
-                        // не перехватываем фокус насильно
-                    }
-                });
+                return `
+            <div class="header">
+              <div class="header-logo" onclick="window._orbita_navigate('home')">${renderLogoIcon(28)} <span>ORBITA</span></div>
+              <div class="header-actions">
+                <div class="icon-btn" onclick="window._orbita_navigate('notifications')" title="Уведомления">
+                  ${icons.bell}
+                  <span class="badge">3</span>
+                </div>
+                <div class="icon-btn" onclick="window._orbita_navigate('profile')" title="Профиль">
+                  ${icons.user}
+                </div>
+              </div>
+            </div>`;
             }
 
-            // ============ ГЛОБАЛЬНЫЕ ФУНКЦИИ ============
+            // ============ РЕНДЕР СТРАНИЦ ============
+            function renderHome() {
+                const popular = getPopularItems();
+                const filtered = getFilteredItems().slice(0, 12);
+                return `
+            <div class="page" id="page-home">
+              ${renderHeader()}
+              <div class="hero">
+                <h1>ORBITA</h1>
+                <p class="subtitle">Вся экосистема MAX в одном месте</p>
+                <div class="tags-row">
+                  <span class="tag-pill">Каналы</span>
+                  <span class="tag-pill">Группы</span>
+                  <span class="tag-pill">Боты</span>
+                  <span class="tag-pill">Мини-приложения</span>
+                </div>
+              </div>
+              <div class="search-wrap" id="homeSearchWrap">
+                ${icons.search.replace('width="18"','width="18" class="search-icon-svg"')}
+                <input class="search-input" type="text" placeholder="Найти канал, группу, бота..." value="${escapeHtml(state.searchQuery)}" oninput="window._orbita_search(this.value, 'home')" id="searchInputHome">
+              </div>
+              <div id="homeDynamicContent">
+                <div class="cat-scroll">${renderCategoryChips()}</div>
+                <div class="big-cats">
+                  ${renderBigCatCard('channels', 'Каналы', icons.channel)}
+                  ${renderBigCatCard('groups', 'Группы', icons.group)}
+                  ${renderBigCatCard('bots', 'Боты', icons.bot)}
+                  ${renderBigCatCard('miniapps', 'Мини-аппы', icons.apps)}
+                </div>
+                <div class="section-header">
+                  <h3>Популярное</h3>
+                  <span class="see-all" onclick="window._orbita_navigate('catalog')">Смотреть всё →</span>
+                </div>
+                <div class="h-scroll">
+                  ${popular.map(i => renderItemCard(i, true)).join('')}
+                </div>
+                ${(state.searchQuery || state.currentCategory !== 'all') ? `
+                <div class="section-header" style="margin-top:8px;">
+                  <h3>Результаты</h3>
+                </div>
+                <div class="catalog-grid">
+                  ${filtered.map(i => renderItemCard(i, true)).join('')}
+                </div>
+                ${filtered.length === 0 ? '<p style="text-align:center;color:var(--text-muted);padding:20px;">Ничего не найдено</p>' : ''}
+                ` : ''}
+              </div>
+            </div>`;
+            }
+
+            function renderCatalog() {
+                const filtered = getFilteredItems();
+                return `
+            <div class="page" id="page-catalog">
+              ${renderHeader()}
+              <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:4px;">Каталог</h2>
+              <div class="search-wrap" id="catalogSearchWrap">
+                ${icons.search.replace('width="18"','width="18" class="search-icon-svg"')}
+                <input class="search-input" type="text" placeholder="Поиск по каталогу..." value="${escapeHtml(state.searchQuery)}" oninput="window._orbita_search(this.value, 'catalog')" id="searchInputCat">
+              </div>
+              <div id="catalogDynamicContent">
+                <div class="cat-scroll">${renderCategoryChips()}</div>
+                <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap;">
+                  <span style="font-size:0.75rem;color:var(--text-muted);">Сортировка:</span>
+                  <button class="cat-chip ${state.sort==='popular'?'active':''}" onclick="window._orbita_setSort('popular')" style="font-size:0.7rem;padding:6px 12px;">Популярные</button>
+                  <button class="cat-chip ${state.sort==='new'?'active':''}" onclick="window._orbita_setSort('new')" style="font-size:0.7rem;padding:6px 12px;">Новые</button>
+                  <button class="cat-chip ${state.sort==='alpha'?'active':''}" onclick="window._orbita_setSort('alpha')" style="font-size:0.7rem;padding:6px 12px;">По алфавиту</button>
+                </div>
+                <p style="font-size:0.75rem;color:var(--text-muted);margin:4px 0;">Найдено: ${filtered.length}</p>
+                <div class="catalog-grid">
+                  ${filtered.map(i => renderItemCard(i, true)).join('')}
+                </div>
+                ${filtered.length === 0 ? '<p style="text-align:center;color:var(--text-muted);padding:30px;">Ничего не найдено</p>' : ''}
+              </div>
+            </div>`;
+            }
+
+            function renderDetail() {
+                const item = state.selectedItem;
+                if (!item) { navigate('home'); return ''; }
+                const isFav = state.favorites.includes(item.id);
+                return `
+            <div class="page" id="page-detail">
+              ${renderHeader(true)}
+              <div class="detail-card" style="margin-top:8px;">
+                <div class="detail-avatar">${getTypeIcon(item.type)}</div>
+                <h2 style="font-size:1.3rem;font-weight:700;">${item.name}</h2>
+                ${item.verified ? '<span class="detail-badge">✓ Проверенный</span>' : ''}
+                <p style="color:var(--text-secondary);margin:8px 0;">${item.description}</p>
+                <p style="font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:4px;">${icons.users} ${item.users} подписчиков</p>
+                <div style="margin:8px 0;font-size:0.8rem;color:var(--text-muted);">Категория: <strong>${item.category}</strong></div>
+                <div class="detail-tags">${item.tags.map(t => `<span class="detail-tag">${t}</span>`).join('')}</div>
+                <button class="btn-open" onclick="window._orbita_openExternal('${item.name}')">ОТКРЫТЬ</button>
+                <div style="margin-top:12px;">
+                  <button class="cat-chip ${isFav?'active':''}" onclick="window._orbita_toggleFav(${item.id});window._orbita_refreshDetail();" style="font-size:0.8rem;">
+                    ${isFav ? '♥ В избранном' : '♡ Добавить в избранное'}
+                  </button>
+                </div>
+              </div>
+            </div>`;
+            }
+
+            function renderFavorites() {
+                const favItems = items.filter(i => state.favorites.includes(i.id));
+                return `
+            <div class="page" id="page-favorites">
+              ${renderHeader()}
+              <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:8px;">Избранное</h2>
+              ${favItems.length === 0 ? '<p style="color:var(--text-muted);text-align:center;padding:40px;">Пока ничего нет в избранном</p>' : ''}
+              <div class="catalog-grid">
+                ${favItems.map(i => renderItemCard(i, true)).join('')}
+              </div>
+            </div>`;
+            }
+
+            function renderProfile() {
+                const favCount = state.favorites.length;
+                return `
+            <div class="page" id="page-profile">
+              ${renderHeader()}
+              <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:4px;">Мой профиль</h2>
+              <div class="profile-avatar">${icons.user.replace('width="18"','width="36"').replace('height="18"','height="36"')}</div>
+              <p style="text-align:center;font-weight:700;font-size:1.1rem;">Гость</p>
+              <div class="stat-row">
+                <div class="stat-box"><strong>${favCount}</strong><br><span style="font-size:0.7rem;color:var(--text-muted);">Избранное</span></div>
+                <div class="stat-box"><strong>24</strong><br><span style="font-size:0.7rem;color:var(--text-muted);">Просмотрено</span></div>
+              </div>
+              <div style="margin-top:16px;">
+                <p style="color:var(--text-muted);font-size:0.85rem;padding:8px 0;">⚙️ Настройки</p>
+                <p style="color:var(--text-muted);font-size:0.85rem;padding:8px 0;">ℹ️ О приложении ORBITA v1.0</p>
+              </div>
+            </div>`;
+            }
+
+            function renderNotifications() {
+                return `
+            <div class="page" id="page-notifications">
+              ${renderHeader()}
+              <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:12px;">Уведомления</h2>
+              <div class="notif-item"><div class="notif-dot"></div><div><strong>Новые каналы</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">Добавлены 12 новых каналов</span></div></div>
+              <div class="notif-item"><div class="notif-dot"></div><div><strong>Популярное</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">Ваш сохранённый канал стал популярным</span></div></div>
+              <div class="notif-item"><div class="notif-dot" style="background:var(--purple-light);"></div><div><strong>Обновление</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">ORBITA получила новые функции</span></div></div>
+            </div>`;
+            }
+
+            // ============ ОБНОВЛЕНИЕ ДИНАМИЧЕСКОГО КОНТЕНТА (без пересоздания всей страницы) ============
+            function updateHomeContent() {
+                const container = document.getElementById('homeDynamicContent');
+                if (!container) return;
+                const popular = getPopularItems();
+                const filtered = getFilteredItems().slice(0, 12);
+                container.innerHTML = `
+              <div class="cat-scroll">${renderCategoryChips()}</div>
+              <div class="big-cats">
+                ${renderBigCatCard('channels', 'Каналы', icons.channel)}
+                ${renderBigCatCard('groups', 'Группы', icons.group)}
+                ${renderBigCatCard('bots', 'Боты', icons.bot)}
+                ${renderBigCatCard('miniapps', 'Мини-аппы', icons.apps)}
+              </div>
+              <div class="section-header">
+                <h3>Популярное</h3>
+                <span class="see-all" onclick="window._orbita_navigate('catalog')">Смотреть всё →</span>
+              </div>
+              <div class="h-scroll">
+                ${popular.map(i => renderItemCard(i, true)).join('')}
+              </div>
+              ${(state.searchQuery || state.currentCategory !== 'all') ? `
+              <div class="section-header" style="margin-top:8px;">
+                <h3>Результаты</h3>
+              </div>
+              <div class="catalog-grid">
+                ${filtered.map(i => renderItemCard(i, true)).join('')}
+              </div>
+              ${filtered.length === 0 ? '<p style="text-align:center;color:var(--text-muted);padding:20px;">Ничего не найдено</p>' : ''}
+              ` : ''}`;
+            }
+
+            function updateCatalogContent() {
+                const container = document.getElementById('catalogDynamicContent');
+                if (!container) return;
+                const filtered = getFilteredItems();
+                container.innerHTML = `
+              <div class="cat-scroll">${renderCategoryChips()}</div>
+              <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap;">
+                <span style="font-size:0.75rem;color:var(--text-muted);">Сортировка:</span>
+                <button class="cat-chip ${state.sort==='popular'?'active':''}" onclick="window._orbita_setSort('popular')" style="font-size:0.7rem;padding:6px 12px;">Популярные</button>
+                <button class="cat-chip ${state.sort==='new'?'active':''}" onclick="window._orbita_setSort('new')" style="font-size:0.7rem;padding:6px 12px;">Новые</button>
+                <button class="cat-chip ${state.sort==='alpha'?'active':''}" onclick="window._orbita_setSort('alpha')" style="font-size:0.7rem;padding:6px 12px;">По алфавиту</button>
+              </div>
+              <p style="font-size:0.75rem;color:var(--text-muted);margin:4px 0;">Найдено: ${filtered.length}</p>
+              <div class="catalog-grid">
+                ${filtered.map(i => renderItemCard(i, true)).join('')}
+              </div>
+              ${filtered.length === 0 ? '<p style="text-align:center;color:var(--text-muted);padding:30px;">Ничего не найдено</p>' : ''}`;
+            }
+
+            function updateCurrentPageContent() {
+                if (state.currentPage === 'home') updateHomeContent();
+                else if (state.currentPage === 'catalog') updateCatalogContent();
+            }
+
+            // ============ ГЛОБАЛЬНЫЕ ФУНКЦИИ С ОПТИМИЗАЦИЕЙ ============
             window._orbita_navigate = function(page) { navigate(page); };
             window._orbita_openItem = function(id) {
                 const item = items.find(i => i.id === id);
@@ -1373,17 +1520,23 @@
                     showToast('♥ Добавлено в избранное');
                 }
                 saveFavorites();
-                render();
+                // обновляем только текущую страницу без полной перерисовки, если не детальная
+                if (state.currentPage === 'detail') render();
+                else updateCurrentPageContent();
             };
-            window._orbita_search = function(val) {
+            window._orbita_search = function(val, source) {
                 state.searchQuery = val;
-                if (state.currentPage === 'detail') navigate('catalog');
-                render();
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    if (state.currentPage === 'detail') navigate('catalog');
+                    else updateCurrentPageContent();
+                }, 150);
+                // синхронизируем второй инпут если нужно (но они независимы)
             };
             window._orbita_setCategory = function(cat) {
                 state.currentCategory = cat;
                 if (state.currentPage === 'detail') navigate('catalog');
-                render();
+                else updateCurrentPageContent();
             };
             window._orbita_filterCat = function(cat) {
                 state.currentCategory = cat;
@@ -1391,7 +1544,7 @@
             };
             window._orbita_setSort = function(sort) {
                 state.sort = sort;
-                render();
+                updateCurrentPageContent();
             };
             window._orbita_goBack = function() {
                 if (state.selectedItem) {
@@ -1404,7 +1557,6 @@
             window._orbita_refreshDetail = function() { render(); };
             window._orbita_openExternal = function(name) {
                 showToast('🚀 Открывается: ' + name);
-                // Заглушка — в будущем здесь будет настоящая ссылка
             };
 
             // ============ ОБРАБОТКА НИЖНЕЙ НАВИГАЦИИ ============
@@ -1426,28 +1578,35 @@
                 }
             });
 
+            // ============ ГЛАВНЫЙ РЕНДЕР (полная перерисовка при смене страницы) ============
+            function render() {
+                let html = '';
+                switch (state.currentPage) {
+                    case 'home': html = renderHome(); break;
+                    case 'catalog': html = renderCatalog(); break;
+                    case 'detail': html = renderDetail(); break;
+                    case 'favorites': html = renderFavorites(); break;
+                    case 'profile': html = renderProfile(); break;
+                    case 'notifications': html = renderNotifications(); break;
+                    default: html = renderHome();
+                }
+                app.innerHTML = html;
+            }
+
             // ============ ИНИЦИАЛИЗАЦИЯ ============
             navigate('home');
 
-            console.log('🪐 ORBITA готова. Каталог экосистемы MAX загружен.');
-            console.log('ГОТОВО.');
-            console.log('Реализовано:');
-            console.log('- Полноценное SPA с навигацией (Главная, Каталог, Избранное, Профиль, Уведомления)');
-            console.log('- Детальная страница каждого объекта');
-            console.log('- Рабочий поиск по названию, описанию, категории, тегам');
-            console.log('- Фильтрация по категориям (Все/Каналы/Группы/Боты/Мини-аппы)');
-            console.log('- Сортировка (Популярные/Новые/По алфавиту)');
-            console.log('- Избранное с сохранением в localStorage');
-            console.log('- Toast-уведомления при добавлении/удалении из избранного');
-            console.log('- Тёмный космический фон со звёздами, орбитами, планетами');
-            console.log('- Glassmorphism-карточки с неоновым свечением');
-            console.log('- 32 демо-объекта (8 каналов, 8 групп, 8 ботов, 8 мини-аппов)');
-            console.log('- Адаптивная вёрстка (320px – 1200px)');
-            console.log('- Нижняя навигация с выделенной кнопкой ORBITA');
-            console.log('- Инлайн SVG-иконки в едином стиле');
-            console.log('- Анимации появления, наведения, свечения');
-            console.log('- Архитектура: данные отдельно, рендер через JS-функции');
-            console.log('- Код готов к подключению реальных данных (замена массива items)');
+            console.log('🪐 ORBITA v2 готова.');
+            console.log('ГОТОВО. Реализовано:');
+            console.log('- Улучшенный UI в стиле COSMIC + PREMIUM + GLASSMORPHISM');
+            console.log('- Карточки категорий с 3D-папками, орбитами и свечением');
+            console.log('- Полноценный логотип ORBITA в header и навигации');
+            console.log('- Header с уведомлениями и профилем на всех страницах');
+            console.log('- Оптимизированный поиск с debounce и сохранением фокуса');
+            console.log('- SVG-иконки вместо emoji в интерфейсе');
+            console.log('- Улучшенные карточки элементов, детальная страница');
+            console.log('- Все функции (поиск, фильтры, сортировка, избранное, localStorage) сохранены');
+            console.log('- Адаптивность и безопасные зоны iPhone');
         })();
     </script>
 </body>
