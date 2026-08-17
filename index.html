@@ -41,7 +41,6 @@
             font-size: 16px;
             scroll-behavior: smooth;
             height: 100%;
-            overflow: hidden;
         }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -229,6 +228,8 @@
             outline: none;
             transition: var(--transition);
             letter-spacing: 0.01em;
+            -webkit-user-select: text;
+            user-select: text;
         }
         .search-input::placeholder { color: var(--text-muted); }
         .search-input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(77,163,245,0.1); }
@@ -242,6 +243,27 @@
             color: var(--text-muted);
             pointer-events: none;
         }
+        .search-clear {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+        .search-clear.show { opacity: 1; pointer-events: auto; }
+        .search-clear svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; fill: none; }
         .cat-scroll {
             display: flex;
             gap: 8px;
@@ -472,6 +494,14 @@
         .item-card .fav-btn:hover { background: var(--bg-secondary); color: var(--purple); }
         .item-card .fav-btn.faved { color: #fff; background: var(--purple); border-color: var(--purple); }
         .item-card .fav-btn svg { width: 14px; height: 14px; fill: currentColor; stroke: none; }
+        .item-card .fav-btn.heart-pop {
+            animation: heartPop 0.3s ease;
+        }
+        @keyframes heartPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+            100% { transform: scale(1); }
+        }
         .catalog-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
@@ -665,9 +695,7 @@
     <!-- ЭКРАН ЗАГРУЗКИ -->
     <div id="splash-screen">
         <div class="splash-content">
-            <div class="splash-scene" id="splashScene">
-                <!-- SVG будет вставлен через JS -->
-            </div>
+            <div class="splash-scene" id="splashScene"></div>
             <div class="splash-title">ORBITA</div>
             <div class="splash-sub" id="splashStatus">
                 <span id="splashText">Инициализация системы</span>
@@ -728,6 +756,7 @@
                 back: '<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>',
                 users: '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M1 21c0-4.42 3.58-8 8-8M17 8a4 4 0 100-8 4 4 0 000 8zM23 21c0-4.42-3.58-8-8-8"/></svg>',
                 verified: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="7,12 10.5,15.5 17,9"/></svg>',
+                close: '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
             };
 
             function renderLogoIcon(size = 32) {
@@ -741,7 +770,7 @@
                 </svg>`;
             }
 
-            // ============ ДАННЫЕ ============
+            // ============ ДАННЫЕ (демо) ============
             const items = [
                 { id: 1, type: 'channel', name: 'MAX Новости', description: 'Новости и обновления MAX',
                     category: 'Новости', users: '12.4K', tags: ['MAX', 'Новости', 'Россия'], verified: true, url: null },
@@ -827,6 +856,11 @@
                 return div.innerHTML;
             }
 
+            function handleError(error) {
+                console.error('[ORBITA]', error);
+                showToast('Произошла ошибка');
+            }
+
             // ============ СОСТОЯНИЕ ============
             const state = {
                 currentPage: 'home',
@@ -835,22 +869,56 @@
                 sort: 'popular',
                 favorites: [],
                 selectedItem: null,
+                user: {
+                    id: null,
+                    name: 'Гость',
+                    avatar: null,
+                },
+                notifications: [
+                    { id: 1, text: 'Новые каналы', subtext: 'Добавлены 12 новых каналов', read: false },
+                    { id: 2, text: 'Популярное', subtext: 'Ваш сохранённый канал стал популярным', read: false },
+                    { id: 3, text: 'Обновление', subtext: 'ORBITA получила новые функции', read: false },
+                ],
+                viewed: [],
             };
 
-            function loadFavorites() {
+            function loadFromStorage(key, fallback) {
                 try {
-                    const stored = JSON.parse(localStorage.getItem('orbita_favorites') || '[]');
-                    if (Array.isArray(stored)) {
-                        state.favorites = stored.filter(id => typeof id === 'number' && Number.isInteger(id));
+                    const stored = localStorage.getItem(key);
+                    if (stored) {
+                        const parsed = JSON.parse(stored);
+                        if (Array.isArray(parsed)) return parsed;
                     }
-                } catch {
-                    state.favorites = [];
+                } catch (e) {
+                    console.warn(`Error parsing ${key}`, e);
+                }
+                return fallback;
+            }
+
+            function loadStateFromStorage() {
+                state.favorites = loadFromStorage('orbita_favorites', []);
+                state.viewed = loadFromStorage('orbita_viewed', []);
+                // notifications загрузим, но пока демо
+            }
+
+            loadStateFromStorage();
+
+            function saveToStorage(key, data) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(data));
+                } catch (e) {
+                    console.warn('Storage save error', e);
                 }
             }
-            loadFavorites();
 
             function saveFavorites() {
-                localStorage.setItem('orbita_favorites', JSON.stringify(state.favorites));
+                saveToStorage('orbita_favorites', state.favorites);
+            }
+            function saveViewed() {
+                saveToStorage('orbita_viewed', state.viewed);
+            }
+            function saveNotifications() {
+                // saveToStorage('orbita_notifications', state.notifications);
             }
 
             const app = document.getElementById('app');
@@ -874,6 +942,7 @@
                 state.currentPage = page;
                 if (data !== null && page === 'detail') {
                     state.selectedItem = data;
+                    markViewed(data.id);
                 } else if (page !== 'detail') {
                     state.selectedItem = null;
                 }
@@ -891,6 +960,21 @@
                     const catNav = bottomNav.querySelector('.nav-item[data-page="catalog"]');
                     if (catNav) catNav.classList.add('active');
                 }
+            }
+
+            function markViewed(id) {
+                if (!state.viewed.includes(id)) {
+                    state.viewed.push(id);
+                    saveViewed();
+                }
+            }
+
+            function getItems() {
+                return [...items];
+            }
+
+            function getItemById(id) {
+                return items.find(i => i.id === id);
             }
 
             function getFilteredItems() {
@@ -987,13 +1071,14 @@
                   <div style="width:38px;"></div>
                 </div>`;
                 }
+                const unreadCount = state.notifications.filter(n => !n.read).length;
                 return `
             <div class="header">
               <div class="header-logo" onclick="window._orbita_navigate('home')">${renderLogoIcon(28)} <span>ORBITA</span></div>
               <div class="header-actions">
                 <div class="icon-btn" onclick="window._orbita_navigate('notifications')" title="Уведомления">
                   ${icons.bell}
-                  <span class="badge">3</span>
+                  ${unreadCount > 0 ? `<span class="badge">${unreadCount}</span>` : ''}
                 </div>
                 <div class="icon-btn" onclick="window._orbita_navigate('profile')" title="Профиль">
                   ${icons.user}
@@ -1021,6 +1106,7 @@
               <div class="search-wrap">
                 ${icons.search.replace('width="18"','width="18" class="search-icon-svg"')}
                 <input class="search-input" type="text" placeholder="Найти канал, группу, бота..." value="${escapeHtml(state.searchQuery)}" oninput="window._orbita_search(this.value, 'home')" id="searchInputHome">
+                <button class="search-clear ${state.searchQuery ? 'show' : ''}" onclick="window._orbita_clearSearch()">${icons.close}</button>
               </div>
               <div id="homeDynamicContent">
                 <div class="cat-scroll">${renderCategoryChips()}</div>
@@ -1059,6 +1145,7 @@
               <div class="search-wrap">
                 ${icons.search.replace('width="18"','width="18" class="search-icon-svg"')}
                 <input class="search-input" type="text" placeholder="Поиск по каталогу..." value="${escapeHtml(state.searchQuery)}" oninput="window._orbita_search(this.value, 'catalog')" id="searchInputCat">
+                <button class="search-clear ${state.searchQuery ? 'show' : ''}" onclick="window._orbita_clearSearch()">${icons.close}</button>
               </div>
               <div id="catalogDynamicContent">
                 <div class="cat-scroll">${renderCategoryChips()}</div>
@@ -1100,6 +1187,7 @@
                 <p style="color:var(--text-secondary);margin:8px 0;">${escapeHtml(item.description)}</p>
                 <p style="font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:4px;">${icons.users} ${escapeHtml(item.users)} подписчиков</p>
                 <div style="margin:8px 0;font-size:0.8rem;color:var(--text-muted);">Категория: <strong>${escapeHtml(item.category)}</strong></div>
+                <div style="margin:8px 0;font-size:0.8rem;color:var(--text-muted);">Тип: <strong>${escapeHtml(getTypeLabel(item.type))}</strong></div>
                 <div class="detail-tags">${item.tags.map(t => `<span class="detail-tag">${escapeHtml(t)}</span>`).join('')}</div>
                 <button class="btn-open" onclick="window._orbita_openExternal(${item.id})">ОТКРЫТЬ</button>
                 <div style="margin-top:12px;">
@@ -1126,15 +1214,16 @@
 
             function renderProfile() {
                 const favCount = state.favorites.length;
+                const viewedCount = state.viewed.length;
                 return `
             <div class="page" id="page-profile">
               ${renderHeader()}
               <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:4px;">Мой профиль</h2>
               <div class="profile-avatar">${icons.user.replace('width="18"','width="36"').replace('height="18"','height="36"')}</div>
-              <p style="text-align:center;font-weight:700;font-size:1.1rem;">Гость</p>
+              <p style="text-align:center;font-weight:700;font-size:1.1rem;">${escapeHtml(state.user.name)}</p>
               <div class="stat-row">
                 <div class="stat-box"><strong>${favCount}</strong><br><span style="font-size:0.7rem;color:var(--text-muted);">Избранное</span></div>
-                <div class="stat-box"><strong>24</strong><br><span style="font-size:0.7rem;color:var(--text-muted);">Просмотрено</span></div>
+                <div class="stat-box"><strong>${viewedCount}</strong><br><span style="font-size:0.7rem;color:var(--text-muted);">Просмотрено</span></div>
               </div>
               <div style="margin-top:16px;">
                 <p style="color:var(--text-secondary);font-size:0.85rem;padding:8px 0;">⚙️ Настройки</p>
@@ -1144,17 +1233,27 @@
             }
 
             function renderNotifications() {
+                const unreadCount = state.notifications.filter(n => !n.read).length;
+                // Помечаем как прочитанные
+                setTimeout(() => {
+                    state.notifications.forEach(n => n.read = true);
+                    saveNotifications();
+                    updateNavActive();
+                }, 500);
                 return `
             <div class="page" id="page-notifications">
               ${renderHeader()}
               <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:12px;">Уведомления</h2>
-              <div class="notif-item"><div class="notif-dot"></div><div><strong>Новые каналы</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">Добавлены 12 новых каналов</span></div></div>
-              <div class="notif-item"><div class="notif-dot"></div><div><strong>Популярное</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">Ваш сохранённый канал стал популярным</span></div></div>
-              <div class="notif-item"><div class="notif-dot" style="background:#318BEA;"></div><div><strong>Обновление</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">ORBITA получила новые функции</span></div></div>
+              ${state.notifications.map(n => `
+                <div class="notif-item">
+                  <div class="notif-dot" style="background:${n.read ? '#A0B8CC' : '#4DA3F5'};"></div>
+                  <div><strong>${escapeHtml(n.text)}</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">${escapeHtml(n.subtext)}</span></div>
+                </div>
+              `).join('')}
             </div>`;
             }
 
-            // Динамическое обновление контента
+            // Динамическое обновление
             function updateHomeContent() {
                 const container = document.getElementById('homeDynamicContent');
                 if (!container) return;
@@ -1184,6 +1283,11 @@
               </div>
               ${filtered.length === 0 ? '<p style="text-align:center;color:var(--text-muted);padding:20px;">Ничего не найдено</p>' : ''}
               ` : ''}`;
+                // Обновим состояние кнопки очистки
+                const clearBtn = document.querySelector('.search-clear');
+                if (clearBtn) {
+                    clearBtn.classList.toggle('show', state.searchQuery.trim().length > 0);
+                }
             }
 
             function updateCatalogContent() {
@@ -1203,6 +1307,10 @@
                 ${filtered.map(i => renderItemCard(i, true)).join('')}
               </div>
               ${filtered.length === 0 ? '<p style="text-align:center;color:var(--text-muted);padding:30px;">Ничего не найдено</p>' : ''}`;
+                const clearBtn = document.querySelector('.search-clear');
+                if (clearBtn) {
+                    clearBtn.classList.toggle('show', state.searchQuery.trim().length > 0);
+                }
             }
 
             function updateCurrentPageContent() {
@@ -1213,10 +1321,16 @@
             // Глобальные функции
             window._orbita_navigate = function(page) { navigate(page); };
             window._orbita_openItem = function(id) {
-                const item = items.find(i => i.id === id);
+                const item = getItemById(id);
                 if (item) navigate('detail', item);
             };
             window._orbita_toggleFav = function(id) {
+                // Анимация
+                const btn = event && event.currentTarget;
+                if (btn) {
+                    btn.classList.add('heart-pop');
+                    setTimeout(() => btn.classList.remove('heart-pop'), 300);
+                }
                 const idx = state.favorites.indexOf(id);
                 if (idx > -1) {
                     state.favorites.splice(idx, 1);
@@ -1226,8 +1340,11 @@
                     showToast('Добавлено в избранное');
                 }
                 saveFavorites();
-                if (state.currentPage === 'detail') render();
-                else updateCurrentPageContent();
+                if (state.currentPage === 'detail') {
+                    render();
+                } else {
+                    updateCurrentPageContent();
+                }
             };
             window._orbita_search = function(val, source) {
                 state.searchQuery = val;
@@ -1236,6 +1353,16 @@
                     if (state.currentPage === 'home') updateHomeContent();
                     else if (state.currentPage === 'catalog') updateCatalogContent();
                 }, 200);
+            };
+            window._orbita_clearSearch = function() {
+                state.searchQuery = '';
+                const input = document.querySelector('.search-input');
+                if (input) {
+                    input.value = '';
+                    input.focus();
+                }
+                if (state.currentPage === 'home') updateHomeContent();
+                else if (state.currentPage === 'catalog') updateCatalogContent();
             };
             window._orbita_setCategory = function(cat) {
                 state.currentCategory = cat;
@@ -1259,17 +1386,33 @@
                 navigate('catalog');
             };
             window._orbita_openExternal = function(id) {
-                const item = items.find(i => i.id === id);
+                const item = getItemById(id);
                 if (!item) {
                     showToast('Объект не найден');
                     return;
                 }
                 if (!item.url) {
-                    showToast('Ссылка пока не добавлена');
+                    showToast('Ссылка пока недоступна');
                     return;
                 }
-                window.open(item.url, '_blank');
+                openExternal(item.url);
             };
+
+            // ============ ВНЕШНИЕ ССЫЛКИ (MAX Bridge) ============
+            function openExternal(url) {
+                try {
+                    if (typeof window.MAX !== 'undefined' && window.MAX.openExternal) {
+                        // TODO: MAX Bridge
+                        window.MAX.openExternal(url);
+                    } else if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
+                        window.Telegram.WebApp.openLink(url);
+                    } else {
+                        window.open(url, '_blank');
+                    }
+                } catch (e) {
+                    handleError(e);
+                }
+            }
 
             bottomNav.addEventListener('click', function(e) {
                 const navItem = e.target.closest('.nav-item');
@@ -1299,19 +1442,18 @@
                 app.innerHTML = html;
             }
 
-            // ============ SPLASH SCREEN АНИМАЦИЯ ============
+            // ============ SPLASH SCREEN АНИМАЦИЯ (исправленная) ============
             function initSplashAnimation() {
                 const splash = document.getElementById('splash-screen');
                 const scene = document.getElementById('splashScene');
                 const statusText = document.getElementById('splashText');
 
-                // SVG сцена
                 const svgns = "http://www.w3.org/2000/svg";
                 const svg = document.createElementNS(svgns, "svg");
                 svg.setAttribute("viewBox", "0 0 280 280");
                 svg.style.overflow = "visible";
 
-                // Орбита
+                // Орбиты
                 const orbitGroup = document.createElementNS(svgns, "g");
                 const orbit1 = document.createElementNS(svgns, "circle");
                 orbit1.setAttribute("cx", "140");
@@ -1333,7 +1475,7 @@
                 orbitGroup.appendChild(orbit2);
                 svg.appendChild(orbitGroup);
 
-                // Tether символ (центр)
+                // Tether
                 const tetherGroup = document.createElementNS(svgns, "g");
                 const centerCircle = document.createElementNS(svgns, "circle");
                 centerCircle.setAttribute("cx", "140");
@@ -1350,27 +1492,25 @@
                 tetherLetter.setAttribute("text-anchor", "middle");
                 tetherLetter.setAttribute("font-size", "20");
                 tetherLetter.setAttribute("font-weight", "700");
-                tetherLetter.setAttribute("fill", "#26A17B"); // зелёный Tether
+                tetherLetter.setAttribute("fill", "#26A17B");
                 tetherLetter.setAttribute("font-family", "Inter, sans-serif");
                 tetherLetter.textContent = "T";
                 tetherGroup.appendChild(tetherLetter);
                 svg.appendChild(tetherGroup);
 
-                // Путь запуска (невидимый)
+                // Путь запуска: исправлен, конечная точка на окружности (203.6, 76.4)
                 const launchPath = document.createElementNS(svgns, "path");
-                launchPath.setAttribute("d", "M 140 240 C 140 190, 200 170, 215 110");
+                launchPath.setAttribute("d", "M 140 240 C 140 160, 224.81 97.61, 203.6 76.4");
                 launchPath.setAttribute("fill", "none");
                 launchPath.setAttribute("stroke", "none");
                 launchPath.setAttribute("id", "launchPath");
                 svg.appendChild(launchPath);
 
-                // Группа ракеты
+                // Ракета
                 const rocketGroup = document.createElementNS(svgns, "g");
                 rocketGroup.setAttribute("id", "rocketGroup");
-
-                // Ракета (SVG)
                 rocketGroup.innerHTML = `
-                    <g transform="translate(0, 0) scale(0.7)">
+                    <g transform="scale(0.7)">
                         <path d="M 12 2 C 10 4, 8 6, 8 9 L 8 12 L 16 12 L 16 9 C 16 6, 14 4, 12 2 Z" fill="#4DA3F5" stroke="#318BEA" stroke-width="0.8"/>
                         <rect x="8" y="12" width="8" height="3" fill="#318BEA" stroke="#318BEA" stroke-width="0.5"/>
                         <circle cx="12" cy="9" r="2" fill="#FFFFFF" stroke="#A0B8CC" stroke-width="0.6"/>
@@ -1380,7 +1520,6 @@
                         <rect x="15" y="15" width="2" height="2" fill="#318BEA"/>
                         <path d="M 9 15 L 7 20 L 9 20 Z" fill="#DCEAF6" stroke="#318BEA" stroke-width="0.4"/>
                         <path d="M 15 15 L 17 20 L 15 20 Z" fill="#DCEAF6" stroke="#318BEA" stroke-width="0.4"/>
-                        <!-- пламя -->
                         <ellipse cx="12" cy="21" rx="3" ry="5" fill="rgba(77,163,245,0.5)" class="flame"/>
                         <ellipse cx="12" cy="22" rx="2" ry="3" fill="rgba(255,255,255,0.8)" class="flame-core"/>
                     </g>
@@ -1388,31 +1527,16 @@
                 svg.appendChild(rocketGroup);
                 scene.appendChild(svg);
 
-                // Получаем path для вычисления точек
                 const pathElem = document.getElementById('launchPath');
                 const pathLength = pathElem.getTotalLength();
-                let startTime = null;
-                const flightDuration = 1800; // мс полёта до орбиты
-                let orbitStartTime = null;
-                const orbitRadius = 90;
+                const flightDuration = 1800;
                 const centerX = 140, centerY = 140;
-                let orbitAngle = -Math.PI / 2; // стартовая точка на орбите (правая сторона)
+                const orbitRadius = 90;
                 const angularSpeed = 0.0025; // рад/мс
-
-                function setRocketPosition(x, y, angleDeg) {
-                    rocketGroup.setAttribute('transform', `translate(${x}, ${y}) rotate(${angleDeg})`);
-                }
-
-                function updateFlame(scale) {
-                    const flames = rocketGroup.querySelectorAll('.flame');
-                    const cores = rocketGroup.querySelectorAll('.flame-core');
-                    if (flames.length) {
-                        flames.forEach(f => f.setAttribute('ry', (5 * scale).toString()));
-                    }
-                    if (cores.length) {
-                        cores.forEach(c => c.setAttribute('ry', (3 * scale).toString()));
-                    }
-                }
+                let startTime = null;
+                let lastTimestamp = null;
+                let orbitAngle = 0;
+                let animationFrameId = null;
 
                 function getPointOnPath(progress) {
                     const point = pathElem.getPointAtLength(progress * pathLength);
@@ -1426,73 +1550,84 @@
                     return Math.atan2(p1.y - p2.y, p1.x - p2.x) * 180 / Math.PI;
                 }
 
+                function setRocketPosition(x, y, angleDeg) {
+                    rocketGroup.setAttribute('transform', `translate(${x}, ${y}) rotate(${angleDeg})`);
+                }
+
+                function updateFlame(scale) {
+                    const flames = rocketGroup.querySelectorAll('.flame');
+                    const cores = rocketGroup.querySelectorAll('.flame-core');
+                    flames.forEach(f => f.setAttribute('ry', (5 * scale).toString()));
+                    cores.forEach(c => c.setAttribute('ry', (3 * scale).toString()));
+                }
+
                 function animate(timestamp) {
                     if (!startTime) startTime = timestamp;
+                    if (!lastTimestamp) lastTimestamp = timestamp;
+                    const deltaTime = Math.min(timestamp - lastTimestamp, 32);
+                    lastTimestamp = timestamp;
+
                     const elapsed = timestamp - startTime;
 
                     if (elapsed < flightDuration) {
-                        // Фаза полёта
                         const progress = Math.min(elapsed / flightDuration, 1);
                         const pos = getPointOnPath(progress);
                         const angle = getAngleOnPath(progress);
-                        setRocketPosition(pos.x, pos.y, angle);
+                        setRocketPosition(pos.x, pos.y, angle + 90);
                         updateFlame(1.2 + Math.sin(elapsed * 0.01) * 0.3);
-                        statusText.textContent = 'Запуск двигателя...';
+                        if (elapsed < 400) statusText.textContent = 'Инициализация системы';
+                        else if (elapsed < 1400) statusText.textContent = 'Запуск двигателя...';
+                        else statusText.textContent = 'Выход на орбиту...';
                     } else {
                         // Фаза орбиты
-                        if (!orbitStartTime) {
-                            orbitStartTime = timestamp;
-                            // определяем начальный угол, чтобы ракета продолжила движение по орбите
-                            // вычислим угол точки входа на орбите относительно центра
+                        if (!orbitAngle) {
                             const lastPoint = getPointOnPath(1);
                             const dx = lastPoint.x - centerX;
                             const dy = lastPoint.y - centerY;
-                            orbitAngle = Math.atan2(dy, dx);
+                            orbitAngle = Math.atan2(-dy, dx); // так как y_svg = centerY - R*sin(theta), то theta = atan2(-dy, dx)
                         }
-                        const orbitElapsed = timestamp - orbitStartTime;
-                        orbitAngle += angularSpeed * (timestamp - (orbitStartTime || timestamp));
-                        // пересчёт угла с постоянной скоростью
+                        orbitAngle += angularSpeed * deltaTime;
                         const x = centerX + orbitRadius * Math.cos(orbitAngle);
-                        const y = centerY + orbitRadius * Math.sin(orbitAngle);
-                        // угол ориентации: касательная к окружности (для движения против часовой стрелки)
-                        const tangentAngle = (orbitAngle * 180 / Math.PI) + 90;
-                        setRocketPosition(x, y, tangentAngle);
+                        const y = centerY - orbitRadius * Math.sin(orbitAngle);
+                        const vx = -Math.sin(orbitAngle);
+                        const vy = -Math.cos(orbitAngle);
+                        const angleDeg = Math.atan2(vy, vx) * 180 / Math.PI;
+                        setRocketPosition(x, y, angleDeg + 90);
                         updateFlame(0.8 + Math.sin(timestamp * 0.005) * 0.2);
-                        statusText.textContent = 'Выход на орбиту...';
-
-                        // после 1.2 сек на орбите можно изменить текст
-                        if (orbitElapsed > 800) {
-                            statusText.textContent = 'ORBITA готова';
-                        }
+                        statusText.textContent = 'ORBITA готова';
                     }
 
-                    if (elapsed < flightDuration + 2000) {
-                        requestAnimationFrame(animate);
-                    }
+                    animationFrameId = requestAnimationFrame(animate);
                 }
 
-                requestAnimationFrame(animate);
+                animationFrameId = requestAnimationFrame(animate);
 
-                // Скрытие splash после ~2.2 сек
+                // Скрытие splash
                 const splashStart = performance.now();
                 function hideSplash() {
                     const elapsed = performance.now() - splashStart;
-                    const minShow = 1600;
+                    const minShow = 2000;
                     const delay = Math.max(0, minShow - elapsed);
                     setTimeout(() => {
                         splash.classList.add('splash-hidden');
+                        cancelAnimationFrame(animationFrameId);
                         setTimeout(() => {
                             splash.style.display = 'none';
                         }, 500);
                     }, delay);
                 }
-                // Устанавливаем максимум 2800 мс, но не более 3000
                 setTimeout(hideSplash, 2200);
             }
 
             // Инициализация
             navigate('home');
             initSplashAnimation();
+
+            // Обработка ошибок глобально
+            window.addEventListener('error', function(event) {
+                handleError(event.error);
+            });
+
         })();
     </script>
 </body>
