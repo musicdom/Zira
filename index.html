@@ -471,9 +471,19 @@
             align-items: center;
             font-size: 0.7rem;
             color: var(--text-muted);
+            margin-top: 6px;
         }
-        .item-meta-users { display: flex; align-items: center; gap: 3px; }
-        .item-meta-users svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .item-card .item-price {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+        .item-card .buy-link {
+            color: var(--purple-light);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
         .item-card .fav-btn {
             position: absolute;
             top: 10px;
@@ -721,11 +731,7 @@
             <span>Каталог</span>
         </div>
         <div class="nav-orbita" data-page="home" title="ORBITA">
-            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="16" cy="16" r="12" stroke="rgba(255,255,255,0.4)"/>
-                <circle cx="16" cy="16" r="4" fill="currentColor"/>
-                <path d="M10 8l12 16M22 8L10 24" stroke="rgba(255,255,255,0.6)"/>
-            </svg>
+            <!-- Используем renderLogoIcon через JS, чтобы логотип был одинаковым -->
         </div>
         <div class="nav-item" data-page="favorites">
             <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
@@ -759,83 +765,81 @@
                 close: '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
             };
 
-            function renderLogoIcon(size = 32) {
-                return `<svg viewBox="0 0 32 32" width="${size}" height="${size}" fill="none">
-                    <circle cx="16" cy="16" r="13" stroke="rgba(77,163,245,0.3)" stroke-width="1.5" stroke-dasharray="4 4"/>
-                    <circle cx="16" cy="16" r="13" stroke="rgba(77,163,245,0.2)" stroke-width="1"/>
-                    <circle cx="16" cy="16" r="3" fill="#4DA3F5"/>
-                    <rect x="7" y="10" width="10" height="10" rx="2" fill="rgba(77,163,245,0.8)" stroke="#318BEA" stroke-width="1"/>
-                    <rect x="9" y="8" width="10" height="10" rx="2" fill="rgba(77,163,245,0.6)" stroke="#4DA3F5" stroke-width="1"/>
-                    <rect x="11" y="6" width="10" height="10" rx="2" fill="#4DA3F5" stroke="#fff" stroke-width="1.2"/>
+            // ============ НОВЫЙ ЛОГОТИП ORBITA (единый для всех мест) ============
+            function renderLogoIcon(size = 32, color = '#4DA3F5') {
+                return `<svg viewBox="0 0 32 32" width="${size}" height="${size}" fill="none" style="color:${color}">
+                    <ellipse cx="16" cy="16" rx="11" ry="5.5" stroke="currentColor" stroke-width="1.5" transform="rotate(-32 16 16)" stroke-dasharray="2 2" opacity="0.7"/>
+                    <ellipse cx="16" cy="16" rx="11" ry="5.5" stroke="currentColor" stroke-width="1.2" transform="rotate(32 16 16)" opacity="0.4"/>
+                    <circle cx="16" cy="16" r="3.5" fill="currentColor"/>
                 </svg>`;
             }
 
-            // ============ ДАННЫЕ (демо) ============
+            // ============ ДАННЫЕ (демо-рекламные места) ============
             const items = [
-                { id: 1, type: 'channel', name: 'MAX Новости', description: 'Новости и обновления MAX',
-                    category: 'Новости', users: '12.4K', tags: ['MAX', 'Новости', 'Россия'], verified: true, url: null },
-                { id: 2, type: 'channel', name: 'Технологии MAX', description: 'Всё о технологиях в MAX',
-                    category: 'Технологии', users: '8.2K', tags: ['Тех', 'MAX', 'IT'], verified: true, url: null },
-                { id: 3, type: 'channel', name: 'Дизайн в MAX', description: 'Гайды по дизайну интерфейсов',
-                    category: 'Дизайн', users: '5.1K', tags: ['Дизайн', 'UI', 'MAX'], verified: false, url: null },
-                { id: 4, type: 'channel', name: 'MAX Музыка', description: 'Лучшие плейлисты и релизы',
-                    category: 'Музыка', users: '18.9K', tags: ['Музыка', 'Релизы'], verified: true, url: null },
-                { id: 5, type: 'channel', name: 'MAX Спорт', description: 'Спортивные трансляции и новости',
-                    category: 'Спорт', users: '9.7K', tags: ['Спорт', 'Трансляции'], verified: false, url: null },
-                { id: 6, type: 'channel', name: 'Кино MAX', description: 'Обзоры фильмов и сериалов',
-                    category: 'Кино', users: '14.3K', tags: ['Кино', 'Сериалы'], verified: true, url: null },
-                { id: 7, type: 'channel', name: 'MAX Образование', description: 'Курсы и лекции в MAX',
-                    category: 'Образование', users: '7.8K', tags: ['Образование', 'Курсы'], verified: false, url: null },
-                { id: 8, type: 'channel', name: 'MAX Путешествия', description: 'Тревел-контент со всего мира',
-                    category: 'Путешествия', users: '6.2K', tags: ['Тревел', 'Мир'], verified: true, url: null },
-                { id: 9, type: 'group', name: 'MAX Community', description: 'Обсуждение MAX и всего вокруг',
-                    category: 'Общение', users: '8.7K', tags: ['MAX', 'Общение', 'Сообщество'], verified: true, url: null },
-                { id: 10, type: 'group', name: 'MAX Разработчики', description: 'Сообщество разработчиков MAX',
-                    category: 'IT', users: '11.2K', tags: ['Dev', 'MAX', 'API'], verified: true, url: null },
-                { id: 11, type: 'group', name: 'MAX Геймеры', description: 'Игры и гейминг в MAX', category: 'Игры',
-                    users: '15.4K', tags: ['Игры', 'Гейминг'], verified: false, url: null },
-                { id: 12, type: 'group', name: 'MAX Бизнес', description: 'Нетворкинг и бизнес-идеи',
-                    category: 'Бизнес', users: '6.8K', tags: ['Бизнес', 'Стартапы'], verified: true, url: null },
-                { id: 13, type: 'group', name: 'MAX Фриланс', description: 'Заказы и проекты для фрилансеров',
-                    category: 'Работа', users: '9.1K', tags: ['Фриланс', 'Заказы'], verified: false, url: null },
-                { id: 14, type: 'group', name: 'MAX Крипто', description: 'Криптовалюты и Web3 в MAX',
-                    category: 'Крипто', users: '13.5K', tags: ['Крипто', 'Web3'], verified: true, url: null },
-                { id: 15, type: 'group', name: 'MAX Хобби', description: 'Творчество и хобби участников',
-                    category: 'Хобби', users: '4.9K', tags: ['Хобби', 'Творчество'], verified: false, url: null },
-                { id: 16, type: 'group', name: 'MAX Авто', description: 'Автомобили и мотоциклы', category: 'Авто',
-                    users: '7.3K', tags: ['Авто', 'Мото'], verified: true, url: null },
-                { id: 17, type: 'bot', name: 'Помощник MAX', description: 'Умный бот-ассистент', category: 'Утилиты',
-                    users: '24K', tags: ['Бот', 'Помощник', 'AI'], verified: true, url: null },
-                { id: 18, type: 'bot', name: 'Переводчик MAX', description: 'Мгновенный перевод сообщений',
-                    category: 'Утилиты', users: '18K', tags: ['Перевод', 'Бот'], verified: true, url: null },
-                { id: 19, type: 'bot', name: 'Погода MAX', description: 'Прогноз погоды в любом городе',
-                    category: 'Инфо', users: '12K', tags: ['Погода', 'Бот'], verified: false, url: null },
-                { id: 20, type: 'bot', name: 'Расписание MAX', description: 'Управление задачами и встречами',
-                    category: 'Продуктивность', users: '9.5K', tags: ['Расписание', 'Задачи'], verified: true, url: null },
-                { id: 21, type: 'bot', name: 'Анекдоты MAX', description: 'Шутки и развлечения каждый день',
-                    category: 'Развлечения', users: '16K', tags: ['Юмор', 'Бот'], verified: false, url: null },
-                { id: 22, type: 'bot', name: 'Фитнес MAX', description: 'Тренировки и план питания',
-                    category: 'Здоровье', users: '7.8K', tags: ['Фитнес', 'Бот'], verified: true, url: null },
-                { id: 23, type: 'bot', name: 'Рецепты MAX', description: 'Кулинарные рецепты на любой вкус',
-                    category: 'Еда', users: '5.4K', tags: ['Рецепты', 'Бот'], verified: false, url: null },
-                { id: 24, type: 'bot', name: 'Финансы MAX', description: 'Учёт расходов и доходов',
-                    category: 'Финансы', users: '8.9K', tags: ['Финансы', 'Бот'], verified: true, url: null },
-                { id: 25, type: 'miniapp', name: 'Игры MAX', description: 'Мини-игры внутри MAX', category: 'Игры',
-                    users: '32K', tags: ['Игры', 'Мини-апп'], verified: true, url: null, popular: true },
-                { id: 26, type: 'miniapp', name: 'Заметки MAX', description: 'Быстрые заметки и списки',
-                    category: 'Продуктивность', users: '11K', tags: ['Заметки', 'Мини-апп'], verified: false, url: null },
-                { id: 27, type: 'miniapp', name: 'Опросы MAX', description: 'Создание опросов и голосований',
-                    category: 'Утилиты', users: '8.6K', tags: ['Опросы', 'Мини-апп'], verified: true, url: null },
-                { id: 28, type: 'miniapp', name: 'Музыка MAX', description: 'Плеер с музыкой прямо в MAX',
-                    category: 'Музыка', users: '19K', tags: ['Музыка', 'Плеер'], verified: true, url: null },
-                { id: 29, type: 'miniapp', name: 'Календарь MAX', description: 'Совместный календарь событий',
-                    category: 'Продуктивность', users: '7.2K', tags: ['Календарь', 'Мини-апп'], verified: false, url: null },
-                { id: 30, type: 'miniapp', name: 'Фоторедактор MAX', description: 'Редактируй фото не выходя из MAX',
-                    category: 'Фото', users: '14K', tags: ['Фото', 'Редактор'], verified: true, url: null },
-                { id: 31, type: 'miniapp', name: 'Кошелёк MAX', description: 'Платежи и переводы внутри MAX',
-                    category: 'Финансы', users: '22K', tags: ['Платежи', 'Мини-апп'], verified: true, url: null },
-                { id: 32, type: 'miniapp', name: 'Карты MAX', description: 'Навигация и места поблизости',
-                    category: 'Навигация', users: '6.5K', tags: ['Карты', 'Мини-апп'], verified: false, url: null },
+                { id: 1, type: 'channel', name: 'Место продаётся', description: 'Здесь может быть ваш канал',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Канал'] },
+                { id: 2, type: 'channel', name: 'Место продаётся', description: 'Здесь может быть ваш канал',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Канал'] },
+                { id: 3, type: 'channel', name: 'Место продаётся', description: 'Здесь может быть ваш канал',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Канал'] },
+                { id: 4, type: 'channel', name: 'Место продаётся', description: 'Здесь может быть ваш канал',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Канал'] },
+                { id: 5, type: 'channel', name: 'Место продаётся', description: 'Здесь может быть ваш канал',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Канал'] },
+                { id: 6, type: 'channel', name: 'Место продаётся', description: 'Здесь может быть ваш канал',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Канал'] },
+                { id: 7, type: 'channel', name: 'Место продаётся', description: 'Здесь может быть ваш канал',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Канал'] },
+                { id: 8, type: 'channel', name: 'Место продаётся', description: 'Здесь может быть ваш канал',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Канал'] },
+                { id: 9, type: 'group', name: 'Место продаётся', description: 'Здесь может быть ваша группа',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Группа'] },
+                { id: 10, type: 'group', name: 'Место продаётся', description: 'Здесь может быть ваша группа',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Группа'] },
+                { id: 11, type: 'group', name: 'Место продаётся', description: 'Здесь может быть ваша группа',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Группа'] },
+                { id: 12, type: 'group', name: 'Место продаётся', description: 'Здесь может быть ваша группа',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Группа'] },
+                { id: 13, type: 'group', name: 'Место продаётся', description: 'Здесь может быть ваша группа',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Группа'] },
+                { id: 14, type: 'group', name: 'Место продаётся', description: 'Здесь может быть ваша группа',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Группа'] },
+                { id: 15, type: 'group', name: 'Место продаётся', description: 'Здесь может быть ваша группа',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Группа'] },
+                { id: 16, type: 'group', name: 'Место продаётся', description: 'Здесь может быть ваша группа',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Группа'] },
+                { id: 17, type: 'bot', name: 'Место продаётся', description: 'Здесь может быть ваш бот',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Бот'] },
+                { id: 18, type: 'bot', name: 'Место продаётся', description: 'Здесь может быть ваш бот',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Бот'] },
+                { id: 19, type: 'bot', name: 'Место продаётся', description: 'Здесь может быть ваш бот',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Бот'] },
+                { id: 20, type: 'bot', name: 'Место продаётся', description: 'Здесь может быть ваш бот',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Бот'] },
+                { id: 21, type: 'bot', name: 'Место продаётся', description: 'Здесь может быть ваш бот',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Бот'] },
+                { id: 22, type: 'bot', name: 'Место продаётся', description: 'Здесь может быть ваш бот',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Бот'] },
+                { id: 23, type: 'bot', name: 'Место продаётся', description: 'Здесь может быть ваш бот',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Бот'] },
+                { id: 24, type: 'bot', name: 'Место продаётся', description: 'Здесь может быть ваш бот',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Бот'] },
+                { id: 25, type: 'miniapp', name: 'Место продаётся', description: 'Здесь может быть ваш мини-апп',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Мини-апп'] },
+                { id: 26, type: 'miniapp', name: 'Место продаётся', description: 'Здесь может быть ваш мини-апп',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Мини-апп'] },
+                { id: 27, type: 'miniapp', name: 'Место продаётся', description: 'Здесь может быть ваш мини-апп',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Мини-апп'] },
+                { id: 28, type: 'miniapp', name: 'Место продаётся', description: 'Здесь может быть ваш мини-апп',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Мини-апп'] },
+                { id: 29, type: 'miniapp', name: 'Место продаётся', description: 'Здесь может быть ваш мини-апп',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Мини-апп'] },
+                { id: 30, type: 'miniapp', name: 'Место продаётся', description: 'Здесь может быть ваш мини-апп',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Мини-апп'] },
+                { id: 31, type: 'miniapp', name: 'Место продаётся', description: 'Здесь может быть ваш мини-апп',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Мини-апп'] },
+                { id: 32, type: 'miniapp', name: 'Место продаётся', description: 'Здесь может быть ваш мини-апп',
+                    category: 'Размещение', price: 999, url: 'https://max.ru/u/f9LHodD0cOKfqMaDv5w3R-4tbdRmFhwDZHFNx9N6vIH5IQ5lOfJNlxk5yD8', isSale: true, verified: false, tags: ['Размещение', 'Мини-апп'] },
             ];
 
             // ============ УТИЛИТЫ ============
@@ -866,7 +870,7 @@
                 currentPage: 'home',
                 currentCategory: 'all',
                 searchQuery: '',
-                sort: 'popular',
+                sort: 'price', // 'price', 'new', 'alpha'
                 favorites: [],
                 selectedItem: null,
                 user: {
@@ -915,9 +919,6 @@
             }
             function saveViewed() {
                 saveToStorage('orbita_viewed', state.viewed);
-            }
-            function saveNotifications() {
-                // saveToStorage('orbita_notifications', state.notifications);
             }
 
             const app = document.getElementById('app');
@@ -992,8 +993,8 @@
                         i.tags.some(t => t.toLowerCase().includes(q))
                     );
                 }
-                if (state.sort === 'popular') {
-                    filtered.sort((a, b) => parseUsers(b.users) - parseUsers(a.users));
+                if (state.sort === 'price') {
+                    filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
                 } else if (state.sort === 'new') {
                     filtered.sort((a, b) => b.id - a.id);
                 } else if (state.sort === 'alpha') {
@@ -1003,7 +1004,14 @@
             }
 
             function getPopularItems() {
-                return [...items].sort((a, b) => parseUsers(b.users) - parseUsers(a.users)).slice(0, 8);
+                // Возвращаем по одному элементу каждого типа
+                const types = ['channel', 'group', 'bot', 'miniapp'];
+                const popular = [];
+                for (const t of types) {
+                    const found = items.find(i => i.type === t);
+                    if (found) popular.push(found);
+                }
+                return popular;
             }
 
             function getTypeIcon(type) {
@@ -1024,12 +1032,12 @@
                 ${isFav ? icons.heart : icons.heartOutline}
               </button>` : ''}
               <div class="item-avatar">${getTypeIcon(item.type)}</div>
-              <div class="item-type">${escapeHtml(getTypeLabel(item.type))}${item.verified ? ' <span style="color:#4DA3F5;">✓</span>' : ''}</div>
+              <div class="item-type">${escapeHtml(getTypeLabel(item.type))}</div>
               <div class="item-name">${escapeHtml(item.name)}</div>
               <div class="item-desc">${escapeHtml(item.description)}</div>
               <div class="item-meta">
-                <span class="item-meta-users">${icons.users} ${escapeHtml(item.users)}</span>
-                <span style="color:#4DA3F5;">Открыть →</span>
+                <span class="item-price">${escapeHtml(item.price + ' ₽')}</span>
+                <span class="buy-link" onclick="event.stopPropagation(); window._orbita_openExternal(${item.id})">Купить →</span>
               </div>
             </div>`;
             }
@@ -1088,7 +1096,6 @@
 
             function renderHome() {
                 const popular = getPopularItems();
-                const filtered = getFilteredItems().slice(0, 12);
                 return `
             <div class="page" id="page-home">
               ${renderHeader()}
@@ -1102,35 +1109,18 @@
                   <span class="tag-pill">Мини-приложения</span>
                 </div>
               </div>
-              <div class="search-wrap">
-                ${icons.search.replace('width="18"','width="18" class="search-icon-svg"')}
-                <input class="search-input" type="text" placeholder="Найти канал, группу, бота..." value="${escapeHtml(state.searchQuery)}" oninput="window._orbita_search(this.value, 'home')" id="searchInputHome">
-                <button class="search-clear ${state.searchQuery ? 'show' : ''}" onclick="window._orbita_clearSearch()">${icons.close}</button>
+              <div class="big-cats">
+                ${renderBigCatCard('channels', 'Каналы', icons.channel)}
+                ${renderBigCatCard('groups', 'Группы', icons.group)}
+                ${renderBigCatCard('bots', 'Боты', icons.bot)}
+                ${renderBigCatCard('miniapps', 'Мини-аппы', icons.apps)}
               </div>
-              <div id="homeDynamicContent">
-                <div class="cat-scroll">${renderCategoryChips()}</div>
-                <div class="big-cats">
-                  ${renderBigCatCard('channels', 'Каналы', icons.channel)}
-                  ${renderBigCatCard('groups', 'Группы', icons.group)}
-                  ${renderBigCatCard('bots', 'Боты', icons.bot)}
-                  ${renderBigCatCard('miniapps', 'Мини-аппы', icons.apps)}
-                </div>
-                <div class="section-header">
-                  <h3>Популярное</h3>
-                  <span class="see-all" onclick="window._orbita_navigate('catalog')">Смотреть всё →</span>
-                </div>
-                <div class="h-scroll">
-                  ${popular.map(i => renderItemCard(i, true)).join('')}
-                </div>
-                ${(state.searchQuery || state.currentCategory !== 'all') ? `
-                <div class="section-header" style="margin-top:8px;">
-                  <h3>Результаты</h3>
-                </div>
-                <div class="catalog-grid">
-                  ${filtered.map(i => renderItemCard(i, true)).join('')}
-                </div>
-                ${filtered.length === 0 ? '<p style="text-align:center;color:var(--text-muted);padding:20px;">Ничего не найдено</p>' : ''}
-                ` : ''}
+              <div class="section-header">
+                <h3>Популярное</h3>
+                <span class="see-all" onclick="window._orbita_navigate('catalog')">Смотреть всё →</span>
+              </div>
+              <div class="h-scroll">
+                ${popular.map(i => renderItemCard(i, true)).join('')}
               </div>
             </div>`;
             }
@@ -1150,7 +1140,7 @@
                 <div class="cat-scroll">${renderCategoryChips()}</div>
                 <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap;">
                   <span style="font-size:0.75rem;color:var(--text-muted);">Сортировка:</span>
-                  <button class="cat-chip ${state.sort==='popular'?'active':''}" onclick="window._orbita_setSort('popular')" style="font-size:0.7rem;padding:6px 12px;">Популярные</button>
+                  <button class="cat-chip ${state.sort==='price'?'active':''}" onclick="window._orbita_setSort('price')" style="font-size:0.7rem;padding:6px 12px;">По цене</button>
                   <button class="cat-chip ${state.sort==='new'?'active':''}" onclick="window._orbita_setSort('new')" style="font-size:0.7rem;padding:6px 12px;">Новые</button>
                   <button class="cat-chip ${state.sort==='alpha'?'active':''}" onclick="window._orbita_setSort('alpha')" style="font-size:0.7rem;padding:6px 12px;">По алфавиту</button>
                 </div>
@@ -1182,13 +1172,12 @@
               <div class="detail-card" style="margin-top:8px;">
                 <div class="detail-avatar">${getTypeIcon(item.type)}</div>
                 <h2 style="font-size:1.3rem;font-weight:700;">${escapeHtml(item.name)}</h2>
-                ${item.verified ? '<span class="detail-badge">✓ Проверенный</span>' : ''}
                 <p style="color:var(--text-secondary);margin:8px 0;">${escapeHtml(item.description)}</p>
-                <p style="font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:4px;">${icons.users} ${escapeHtml(item.users)} подписчиков</p>
                 <div style="margin:8px 0;font-size:0.8rem;color:var(--text-muted);">Категория: <strong>${escapeHtml(item.category)}</strong></div>
                 <div style="margin:8px 0;font-size:0.8rem;color:var(--text-muted);">Тип: <strong>${escapeHtml(getTypeLabel(item.type))}</strong></div>
                 <div class="detail-tags">${item.tags.map(t => `<span class="detail-tag">${escapeHtml(t)}</span>`).join('')}</div>
-                <button class="btn-open" onclick="window._orbita_openExternal(${item.id})">ОТКРЫТЬ</button>
+                <div style="margin:16px 0;font-size:1.5rem;font-weight:700;">${escapeHtml(item.price + ' ₽')}</div>
+                <button class="btn-open" onclick="window._orbita_openExternal(${item.id})">КУПИТЬ</button>
                 <div style="margin-top:12px;">
                   <button class="cat-chip ${isFav?'active':''}" onclick="window._orbita_toggleFav(${item.id});" style="font-size:0.8rem;">
                     ${isFav ? '♥ В избранном' : '♡ Добавить в избранное'}
@@ -1251,40 +1240,19 @@
             </div>`;
             }
 
-            // Динамическое обновление
+            // Динамическое обновление (используется для каталога при изменении фильтров/поиска)
             function updateHomeContent() {
                 const container = document.getElementById('homeDynamicContent');
                 if (!container) return;
                 const popular = getPopularItems();
-                const filtered = getFilteredItems().slice(0, 12);
                 container.innerHTML = `
-              <div class="cat-scroll">${renderCategoryChips()}</div>
-              <div class="big-cats">
-                ${renderBigCatCard('channels', 'Каналы', icons.channel)}
-                ${renderBigCatCard('groups', 'Группы', icons.group)}
-                ${renderBigCatCard('bots', 'Боты', icons.bot)}
-                ${renderBigCatCard('miniapps', 'Мини-аппы', icons.apps)}
-              </div>
               <div class="section-header">
                 <h3>Популярное</h3>
                 <span class="see-all" onclick="window._orbita_navigate('catalog')">Смотреть всё →</span>
               </div>
               <div class="h-scroll">
                 ${popular.map(i => renderItemCard(i, true)).join('')}
-              </div>
-              ${(state.searchQuery || state.currentCategory !== 'all') ? `
-              <div class="section-header" style="margin-top:8px;">
-                <h3>Результаты</h3>
-              </div>
-              <div class="catalog-grid">
-                ${filtered.map(i => renderItemCard(i, true)).join('')}
-              </div>
-              ${filtered.length === 0 ? '<p style="text-align:center;color:var(--text-muted);padding:20px;">Ничего не найдено</p>' : ''}
-              ` : ''}`;
-                const clearBtn = document.querySelector('.search-clear');
-                if (clearBtn) {
-                    clearBtn.classList.toggle('show', state.searchQuery.trim().length > 0);
-                }
+              </div>`;
             }
 
             function updateCatalogContent() {
@@ -1295,7 +1263,7 @@
               <div class="cat-scroll">${renderCategoryChips()}</div>
               <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap;">
                 <span style="font-size:0.75rem;color:var(--text-muted);">Сортировка:</span>
-                <button class="cat-chip ${state.sort==='popular'?'active':''}" onclick="window._orbita_setSort('popular')" style="font-size:0.7rem;padding:6px 12px;">Популярные</button>
+                <button class="cat-chip ${state.sort==='price'?'active':''}" onclick="window._orbita_setSort('price')" style="font-size:0.7rem;padding:6px 12px;">По цене</button>
                 <button class="cat-chip ${state.sort==='new'?'active':''}" onclick="window._orbita_setSort('new')" style="font-size:0.7rem;padding:6px 12px;">Новые</button>
                 <button class="cat-chip ${state.sort==='alpha'?'active':''}" onclick="window._orbita_setSort('alpha')" style="font-size:0.7rem;padding:6px 12px;">По алфавиту</button>
               </div>
@@ -1346,8 +1314,7 @@
                 state.searchQuery = val;
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(() => {
-                    if (state.currentPage === 'home') updateHomeContent();
-                    else if (state.currentPage === 'catalog') updateCatalogContent();
+                    if (state.currentPage === 'catalog') updateCatalogContent();
                 }, 200);
             };
             window._orbita_clearSearch = function() {
@@ -1357,8 +1324,7 @@
                     input.value = '';
                     input.focus();
                 }
-                if (state.currentPage === 'home') updateHomeContent();
-                else if (state.currentPage === 'catalog') updateCatalogContent();
+                if (state.currentPage === 'catalog') updateCatalogContent();
             };
             window._orbita_setCategory = function(cat) {
                 state.currentCategory = cat;
@@ -1398,7 +1364,6 @@
             function openExternal(url) {
                 try {
                     if (typeof window.MAX !== 'undefined' && window.MAX.openExternal) {
-                        // TODO: MAX Bridge
                         window.MAX.openExternal(url);
                     } else if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
                         window.Telegram.WebApp.openLink(url);
@@ -1438,7 +1403,7 @@
                 app.innerHTML = html;
             }
 
-            // ============ SPLASH SCREEN АНИМАЦИЯ (НОВАЯ) ============
+            // ============ SPLASH SCREEN АНИМАЦИЯ (орбиты + ядро) ============
             function initSplashAnimation() {
                 const splash = document.getElementById('splash-screen');
                 const scene = document.getElementById('splashScene');
@@ -1558,19 +1523,15 @@
                 function animate(timestamp) {
                     if (!startTime) startTime = timestamp;
                     const elapsed = timestamp - startTime;
-                    // Вращение орбит
                     const rotation = elapsed * 0.025;
                     orbit1.setAttribute("transform", `rotate(${rotation} 140 140)`);
                     orbit2.setAttribute("transform", `rotate(${-rotation * 0.7} 140 140)`);
-                    // Спутник
                     const angle = elapsed * 0.0025;
                     const x = 140 + Math.cos(angle) * 92;
                     const y = 140 + Math.sin(angle) * 48;
                     satellite.setAttribute("transform", `translate(${x} ${y}) rotate(${angle * 57.3 + 90})`);
-                    // Пульсация ядра
                     const pulse = 1 + Math.sin(elapsed * 0.004) * 0.06;
                     core.setAttribute("transform", `translate(140 140) scale(${pulse}) translate(-140 -140)`);
-                    // Статус
                     if (elapsed < 700) {
                         statusText.textContent = "Инициализация ORBITA";
                     } else if (elapsed < 1500) {
@@ -1595,9 +1556,22 @@
                 }, duration);
             }
 
+            // ============ УСТАНОВКА ЛОГОТИПА В НИЖНЮЮ НАВИГАЦИЮ ============
+            function setNavLogo() {
+                const navOrbita = document.querySelector('.nav-orbita');
+                if (navOrbita) {
+                    navOrbita.innerHTML = renderLogoIcon(28, '#fff');
+                }
+            }
+
             // Инициализация
-            navigate('home');
-            initSplashAnimation();
+            function init() {
+                setNavLogo();
+                navigate('home');
+                initSplashAnimation();
+            }
+
+            init();
 
             // Обработка ошибок глобально
             window.addEventListener('error', function(event) {
