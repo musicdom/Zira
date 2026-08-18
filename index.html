@@ -82,21 +82,21 @@
             position: relative;
         }
         .splash-scene {
-            width: 280px;
-            height: 280px;
-            margin: 0 auto 20px;
+            width: 240px;
+            height: 240px;
+            margin: 0 auto 12px;
             position: relative;
         }
         .splash-scene svg {
-            width: 100%;
-            height: 100%;
+            width: 240px;
+            height: 240px;
         }
         .splash-title {
             font-size: 2rem;
             font-weight: 700;
             color: var(--text);
-            letter-spacing: -0.02em;
-            margin-bottom: 8px;
+            letter-spacing: -0.03em;
+            margin-bottom: 6px;
         }
         .splash-sub {
             font-size: 0.9rem;
@@ -898,7 +898,6 @@
             function loadStateFromStorage() {
                 state.favorites = loadFromStorage('orbita_favorites', []);
                 state.viewed = loadFromStorage('orbita_viewed', []);
-                // notifications загрузим, но пока демо
             }
 
             loadStateFromStorage();
@@ -1234,7 +1233,6 @@
 
             function renderNotifications() {
                 const unreadCount = state.notifications.filter(n => !n.read).length;
-                // Помечаем как прочитанные
                 setTimeout(() => {
                     state.notifications.forEach(n => n.read = true);
                     saveNotifications();
@@ -1283,7 +1281,6 @@
               </div>
               ${filtered.length === 0 ? '<p style="text-align:center;color:var(--text-muted);padding:20px;">Ничего не найдено</p>' : ''}
               ` : ''}`;
-                // Обновим состояние кнопки очистки
                 const clearBtn = document.querySelector('.search-clear');
                 if (clearBtn) {
                     clearBtn.classList.toggle('show', state.searchQuery.trim().length > 0);
@@ -1325,7 +1322,6 @@
                 if (item) navigate('detail', item);
             };
             window._orbita_toggleFav = function(id) {
-                // Анимация
                 const btn = event && event.currentTarget;
                 if (btn) {
                     btn.classList.add('heart-pop');
@@ -1442,181 +1438,161 @@
                 app.innerHTML = html;
             }
 
-            // ============ SPLASH SCREEN АНИМАЦИЯ (исправленная) ============
+            // ============ SPLASH SCREEN АНИМАЦИЯ (НОВАЯ) ============
             function initSplashAnimation() {
                 const splash = document.getElementById('splash-screen');
                 const scene = document.getElementById('splashScene');
                 const statusText = document.getElementById('splashText');
-
                 const svgns = "http://www.w3.org/2000/svg";
                 const svg = document.createElementNS(svgns, "svg");
                 svg.setAttribute("viewBox", "0 0 280 280");
+                svg.setAttribute("width", "280");
+                svg.setAttribute("height", "280");
                 svg.style.overflow = "visible";
+
+                // Мягкое свечение
+                const defs = document.createElementNS(svgns, "defs");
+                const gradient = document.createElementNS(svgns, "radialGradient");
+                gradient.setAttribute("id", "orbitaGlow");
+                const stop1 = document.createElementNS(svgns, "stop");
+                stop1.setAttribute("offset", "0%");
+                stop1.setAttribute("stop-color", "#4DA3F5");
+                stop1.setAttribute("stop-opacity", "0.18");
+                const stop2 = document.createElementNS(svgns, "stop");
+                stop2.setAttribute("offset", "100%");
+                stop2.setAttribute("stop-color", "#4DA3F5");
+                stop2.setAttribute("stop-opacity", "0");
+                gradient.appendChild(stop1);
+                gradient.appendChild(stop2);
+                defs.appendChild(gradient);
+                svg.appendChild(defs);
+
+                const glow = document.createElementNS(svgns, "circle");
+                glow.setAttribute("cx", "140");
+                glow.setAttribute("cy", "140");
+                glow.setAttribute("r", "75");
+                glow.setAttribute("fill", "url(#orbitaGlow)");
+                svg.appendChild(glow);
 
                 // Орбиты
                 const orbitGroup = document.createElementNS(svgns, "g");
-                const orbit1 = document.createElementNS(svgns, "circle");
+                orbitGroup.setAttribute("id", "orbitGroup");
+                const orbit1 = document.createElementNS(svgns, "ellipse");
                 orbit1.setAttribute("cx", "140");
                 orbit1.setAttribute("cy", "140");
-                orbit1.setAttribute("r", "90");
+                orbit1.setAttribute("rx", "92");
+                orbit1.setAttribute("ry", "48");
+                orbit1.setAttribute("transform", "rotate(-32 140 140)");
                 orbit1.setAttribute("fill", "none");
-                orbit1.setAttribute("stroke", "rgba(77,163,245,0.25)");
-                orbit1.setAttribute("stroke-width", "1.5");
-                orbit1.setAttribute("stroke-dasharray", "4 4");
-                orbitGroup.appendChild(orbit1);
-
-                const orbit2 = document.createElementNS(svgns, "circle");
+                orbit1.setAttribute("stroke", "#4DA3F5");
+                orbit1.setAttribute("stroke-width", "1.8");
+                orbit1.setAttribute("opacity", "0.45");
+                orbit1.setAttribute("stroke-dasharray", "5 6");
+                const orbit2 = document.createElementNS(svgns, "ellipse");
                 orbit2.setAttribute("cx", "140");
                 orbit2.setAttribute("cy", "140");
-                orbit2.setAttribute("r", "75");
+                orbit2.setAttribute("rx", "92");
+                orbit2.setAttribute("ry", "48");
+                orbit2.setAttribute("transform", "rotate(32 140 140)");
                 orbit2.setAttribute("fill", "none");
-                orbit2.setAttribute("stroke", "rgba(77,163,245,0.12)");
-                orbit2.setAttribute("stroke-width", "1");
+                orbit2.setAttribute("stroke", "#318BEA");
+                orbit2.setAttribute("stroke-width", "1.4");
+                orbit2.setAttribute("opacity", "0.22");
+                orbitGroup.appendChild(orbit1);
                 orbitGroup.appendChild(orbit2);
                 svg.appendChild(orbitGroup);
 
-                // Tether
-                const tetherGroup = document.createElementNS(svgns, "g");
-                const centerCircle = document.createElementNS(svgns, "circle");
-                centerCircle.setAttribute("cx", "140");
-                centerCircle.setAttribute("cy", "140");
-                centerCircle.setAttribute("r", "22");
-                centerCircle.setAttribute("fill", "#FFFFFF");
-                centerCircle.setAttribute("stroke", "#E5F3FF");
-                centerCircle.setAttribute("stroke-width", "1.5");
-                tetherGroup.appendChild(centerCircle);
+                // Центральное ядро
+                const core = document.createElementNS(svgns, "g");
+                core.setAttribute("id", "orbitaCore");
+                const coreCircle = document.createElementNS(svgns, "circle");
+                coreCircle.setAttribute("cx", "140");
+                coreCircle.setAttribute("cy", "140");
+                coreCircle.setAttribute("r", "27");
+                coreCircle.setAttribute("fill", "#FFFFFF");
+                coreCircle.setAttribute("stroke", "#DCEAF6");
+                coreCircle.setAttribute("stroke-width", "1.5");
+                const coreDot = document.createElementNS(svgns, "circle");
+                coreDot.setAttribute("cx", "140");
+                coreDot.setAttribute("cy", "140");
+                coreDot.setAttribute("r", "7");
+                coreDot.setAttribute("fill", "#4DA3F5");
+                const coreHighlight = document.createElementNS(svgns, "circle");
+                coreHighlight.setAttribute("cx", "137.5");
+                coreHighlight.setAttribute("cy", "137.5");
+                coreHighlight.setAttribute("r", "2");
+                coreHighlight.setAttribute("fill", "#FFFFFF");
+                core.appendChild(coreCircle);
+                core.appendChild(coreDot);
+                core.appendChild(coreHighlight);
+                svg.appendChild(core);
 
-                const tetherLetter = document.createElementNS(svgns, "text");
-                tetherLetter.setAttribute("x", "140");
-                tetherLetter.setAttribute("y", "149");
-                tetherLetter.setAttribute("text-anchor", "middle");
-                tetherLetter.setAttribute("font-size", "20");
-                tetherLetter.setAttribute("font-weight", "700");
-                tetherLetter.setAttribute("fill", "#26A17B");
-                tetherLetter.setAttribute("font-family", "Inter, sans-serif");
-                tetherLetter.textContent = "T";
-                tetherGroup.appendChild(tetherLetter);
-                svg.appendChild(tetherGroup);
+                // Спутник
+                const satellite = document.createElementNS(svgns, "g");
+                satellite.setAttribute("id", "orbitaSatellite");
+                const satelliteGlow = document.createElementNS(svgns, "circle");
+                satelliteGlow.setAttribute("cx", "0");
+                satelliteGlow.setAttribute("cy", "0");
+                satelliteGlow.setAttribute("r", "10");
+                satelliteGlow.setAttribute("fill", "#4DA3F5");
+                satelliteGlow.setAttribute("opacity", "0.12");
+                const satelliteBody = document.createElementNS(svgns, "circle");
+                satelliteBody.setAttribute("cx", "0");
+                satelliteBody.setAttribute("cy", "0");
+                satelliteBody.setAttribute("r", "4.5");
+                satelliteBody.setAttribute("fill", "#318BEA");
+                const satelliteLight = document.createElementNS(svgns, "circle");
+                satelliteLight.setAttribute("cx", "-1.5");
+                satelliteLight.setAttribute("cy", "-1.5");
+                satelliteLight.setAttribute("r", "1.4");
+                satelliteLight.setAttribute("fill", "#FFFFFF");
+                satellite.appendChild(satelliteGlow);
+                satellite.appendChild(satelliteBody);
+                satellite.appendChild(satelliteLight);
+                svg.appendChild(satellite);
 
-                // Путь запуска: исправлен, конечная точка на окружности (203.6, 76.4)
-                const launchPath = document.createElementNS(svgns, "path");
-                launchPath.setAttribute("d", "M 140 240 C 140 160, 224.81 97.61, 203.6 76.4");
-                launchPath.setAttribute("fill", "none");
-                launchPath.setAttribute("stroke", "none");
-                launchPath.setAttribute("id", "launchPath");
-                svg.appendChild(launchPath);
-
-                // Ракета
-                const rocketGroup = document.createElementNS(svgns, "g");
-                rocketGroup.setAttribute("id", "rocketGroup");
-                rocketGroup.innerHTML = `
-                    <g transform="scale(0.7)">
-                        <path d="M 12 2 C 10 4, 8 6, 8 9 L 8 12 L 16 12 L 16 9 C 16 6, 14 4, 12 2 Z" fill="#4DA3F5" stroke="#318BEA" stroke-width="0.8"/>
-                        <rect x="8" y="12" width="8" height="3" fill="#318BEA" stroke="#318BEA" stroke-width="0.5"/>
-                        <circle cx="12" cy="9" r="2" fill="#FFFFFF" stroke="#A0B8CC" stroke-width="0.6"/>
-                        <path d="M 9 10 L 6 13 L 9 13 Z" fill="#4DA3F5" stroke="#318BEA" stroke-width="0.5"/>
-                        <path d="M 15 10 L 18 13 L 15 13 Z" fill="#4DA3F5" stroke="#318BEA" stroke-width="0.5"/>
-                        <rect x="7" y="15" width="2" height="2" fill="#318BEA"/>
-                        <rect x="15" y="15" width="2" height="2" fill="#318BEA"/>
-                        <path d="M 9 15 L 7 20 L 9 20 Z" fill="#DCEAF6" stroke="#318BEA" stroke-width="0.4"/>
-                        <path d="M 15 15 L 17 20 L 15 20 Z" fill="#DCEAF6" stroke="#318BEA" stroke-width="0.4"/>
-                        <ellipse cx="12" cy="21" rx="3" ry="5" fill="rgba(77,163,245,0.5)" class="flame"/>
-                        <ellipse cx="12" cy="22" rx="2" ry="3" fill="rgba(255,255,255,0.8)" class="flame-core"/>
-                    </g>
-                `;
-                svg.appendChild(rocketGroup);
-                scene.appendChild(svg);
-
-                const pathElem = document.getElementById('launchPath');
-                const pathLength = pathElem.getTotalLength();
-                const flightDuration = 1800;
-                const centerX = 140, centerY = 140;
-                const orbitRadius = 90;
-                const angularSpeed = 0.0025; // рад/мс
+                // Анимация
                 let startTime = null;
-                let lastTimestamp = null;
-                let orbitAngle = 0;
                 let animationFrameId = null;
-
-                function getPointOnPath(progress) {
-                    const point = pathElem.getPointAtLength(progress * pathLength);
-                    return { x: point.x, y: point.y };
-                }
-
-                function getAngleOnPath(progress) {
-                    const eps = 0.001;
-                    const p1 = getPointOnPath(Math.min(progress + eps, 1));
-                    const p2 = getPointOnPath(progress);
-                    return Math.atan2(p1.y - p2.y, p1.x - p2.x) * 180 / Math.PI;
-                }
-
-                function setRocketPosition(x, y, angleDeg) {
-                    rocketGroup.setAttribute('transform', `translate(${x}, ${y}) rotate(${angleDeg})`);
-                }
-
-                function updateFlame(scale) {
-                    const flames = rocketGroup.querySelectorAll('.flame');
-                    const cores = rocketGroup.querySelectorAll('.flame-core');
-                    flames.forEach(f => f.setAttribute('ry', (5 * scale).toString()));
-                    cores.forEach(c => c.setAttribute('ry', (3 * scale).toString()));
-                }
-
+                const duration = 2400;
                 function animate(timestamp) {
                     if (!startTime) startTime = timestamp;
-                    if (!lastTimestamp) lastTimestamp = timestamp;
-                    const deltaTime = Math.min(timestamp - lastTimestamp, 32);
-                    lastTimestamp = timestamp;
-
                     const elapsed = timestamp - startTime;
-
-                    if (elapsed < flightDuration) {
-                        const progress = Math.min(elapsed / flightDuration, 1);
-                        const pos = getPointOnPath(progress);
-                        const angle = getAngleOnPath(progress);
-                        setRocketPosition(pos.x, pos.y, angle + 90);
-                        updateFlame(1.2 + Math.sin(elapsed * 0.01) * 0.3);
-                        if (elapsed < 400) statusText.textContent = 'Инициализация системы';
-                        else if (elapsed < 1400) statusText.textContent = 'Запуск двигателя...';
-                        else statusText.textContent = 'Выход на орбиту...';
+                    // Вращение орбит
+                    const rotation = elapsed * 0.025;
+                    orbit1.setAttribute("transform", `rotate(${rotation} 140 140)`);
+                    orbit2.setAttribute("transform", `rotate(${-rotation * 0.7} 140 140)`);
+                    // Спутник
+                    const angle = elapsed * 0.0025;
+                    const x = 140 + Math.cos(angle) * 92;
+                    const y = 140 + Math.sin(angle) * 48;
+                    satellite.setAttribute("transform", `translate(${x} ${y}) rotate(${angle * 57.3 + 90})`);
+                    // Пульсация ядра
+                    const pulse = 1 + Math.sin(elapsed * 0.004) * 0.06;
+                    core.setAttribute("transform", `translate(140 140) scale(${pulse}) translate(-140 -140)`);
+                    // Статус
+                    if (elapsed < 700) {
+                        statusText.textContent = "Инициализация ORBITA";
+                    } else if (elapsed < 1500) {
+                        statusText.textContent = "Синхронизация каталога...";
                     } else {
-                        // Фаза орбиты
-                        if (!orbitAngle) {
-                            const lastPoint = getPointOnPath(1);
-                            const dx = lastPoint.x - centerX;
-                            const dy = lastPoint.y - centerY;
-                            orbitAngle = Math.atan2(-dy, dx); // так как y_svg = centerY - R*sin(theta), то theta = atan2(-dy, dx)
-                        }
-                        orbitAngle += angularSpeed * deltaTime;
-                        const x = centerX + orbitRadius * Math.cos(orbitAngle);
-                        const y = centerY - orbitRadius * Math.sin(orbitAngle);
-                        const vx = -Math.sin(orbitAngle);
-                        const vy = -Math.cos(orbitAngle);
-                        const angleDeg = Math.atan2(vy, vx) * 180 / Math.PI;
-                        setRocketPosition(x, y, angleDeg + 90);
-                        updateFlame(0.8 + Math.sin(timestamp * 0.005) * 0.2);
-                        statusText.textContent = 'ORBITA готова';
+                        statusText.textContent = "Выход на орбиту...";
                     }
-
                     animationFrameId = requestAnimationFrame(animate);
                 }
-
+                scene.appendChild(svg);
                 animationFrameId = requestAnimationFrame(animate);
 
-                // Скрытие splash
-                const splashStart = performance.now();
-                function hideSplash() {
-                    const elapsed = performance.now() - splashStart;
-                    const minShow = 2000;
-                    const delay = Math.max(0, minShow - elapsed);
+                setTimeout(() => {
+                    statusText.textContent = "ORBITA готова";
                     setTimeout(() => {
                         splash.classList.add('splash-hidden');
                         cancelAnimationFrame(animationFrameId);
                         setTimeout(() => {
                             splash.style.display = 'none';
                         }, 500);
-                    }, delay);
-                }
-                setTimeout(hideSplash, 2200);
+                    }, 400);
+                }, duration);
             }
 
             // Инициализация
