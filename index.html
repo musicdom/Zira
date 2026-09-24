@@ -14,7 +14,7 @@ body[data-category="Ужины"]{--bg:#f7f7ee;--accent:#708d58;--soft:#edf2df}
 body[data-category="Салаты"]{--bg:#f4faf2;--accent:#57915d;--soft:#e9f5e5}
 body[data-category="Десерты"]{--bg:#fff6f5;--accent:#c87886;--soft:#fdebed}
 body[data-category]{position:relative;min-height:100dvh;background:var(--bg)}
-body[data-category]:before{content:"";position:fixed;inset:0;z-index:-2;background-position:center center;background-size:cover;background-repeat:no-repeat;pointer-events:none;transform:translateZ(0)}
+body[data-category]:before{content:"";position:fixed;inset:-10px;z-index:-2;background-position:center center;background-size:cover;background-repeat:no-repeat;filter:blur(4px);pointer-events:none;transform:translateZ(0) scale(1.02)}
 body[data-category="Завтраки"]:before{background-image:linear-gradient(rgba(255,248,241,.12),rgba(255,248,241,.12)),url("https://i.ibb.co/fK5Lyp4/IMG-4657.png")}
 body[data-category="Обеды"]:before{background-image:linear-gradient(rgba(255,247,236,.12),rgba(255,247,236,.12)),url("https://i.ibb.co/TnLh5V2/IMG-4659.png")}
 body[data-category="Ужины"]:before{background-image:linear-gradient(rgba(247,247,238,.12),rgba(247,247,238,.12)),url("https://i.ibb.co/Psh9572f/IMG-4658.png")}
