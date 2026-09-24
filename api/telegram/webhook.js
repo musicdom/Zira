@@ -13,20 +13,12 @@ async function telegram(method, payload) {
 function welcome() {
   return {
     text:
-      "🥑 Kildisheva_food\n\n" +
-      "Твой доступ к готовому меню питания на каждый день 🤎\n\n" +
-      "🍳 20 завтраков\n" +
-      "🍲 20 обедов\n" +
-      "🥗 20 ужинов\n\n" +
-      "Всего 60 готовых блюд с:\n" +
-      "• калорийностью\n" +
-      "• БЖУ\n" +
-      "• граммовкой\n" +
-      "• списком ингредиентов\n" +
-      "• подробным приготовлением\n\n" +
-      "Не нужно каждый день думать, что приготовить — просто открывай меню и выбирай блюдо ✨\n\n" +
-      "💳 Стоимость доступа — 1 490 ₽\n\n" +
-      "Нажми кнопку ниже, чтобы получить доступ к меню 👇",
+      "Добро пожаловать в Kildisheva_food 🥑\n\n" +
+      "Здесь собраны готовые идеи питания для тех, кто устал каждый день думать: «Что сегодня приготовить?»\n\n" +
+      "🥗 Завтраки, обеды, ужины и перекусы\n" +
+      "🍽️ Готовое БЖУ для каждого блюда\n" +
+      "🤎 Разнообразное питание без сложностей и вечного стояния у плиты\n\n" +
+      "Всё уже придумано за тебя — остаётся только выбрать, что хочется сегодня 💫",
     reply_markup: {
       inline_keyboard: [
         [{ text: "🔐 ПОЛУЧИТЬ ДОСТУП", callback_data: "buy_access" }],
@@ -36,17 +28,9 @@ function welcome() {
 }
 
 export default async function handler(req, res) {
-  if (req.method === "GET") {
-    return res.status(200).json({ ok: true, service: "zira-telegram-webhook" });
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ ok: false, error: "Method not allowed" });
-  }
-
-  if (!BOT_TOKEN) {
-    return res.status(500).json({ ok: false, error: "TELEGRAM_BOT_TOKEN is not configured" });
-  }
+  if (req.method === "GET") return res.status(200).json({ ok: true, service: "zira-telegram-webhook" });
+  if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method not allowed" });
+  if (!BOT_TOKEN) return res.status(500).json({ ok: false, error: "TELEGRAM_BOT_TOKEN is not configured" });
 
   try {
     const update = req.body || {};
@@ -55,12 +39,8 @@ export default async function handler(req, res) {
 
     if (message?.chat?.id) {
       const text = (message.text || "").trim().toLowerCase();
-
       if (text === "/start" || text === "start" || text === "старт" || text === "начать") {
-        await telegram("sendMessage", {
-          chat_id: message.chat.id,
-          ...welcome(),
-        });
+        await telegram("sendMessage", { chat_id: message.chat.id, ...welcome() });
       }
     }
 
@@ -70,14 +50,9 @@ export default async function handler(req, res) {
       if (callback.data === "buy_access") {
         await telegram("sendMessage", {
           chat_id: callback.message.chat.id,
-          text:
-            "🎉 Оплата прошла!\n\n" +
-            "Ваш доступ к материалам открыт.\n\n" +
-            "Сейчас оплата отключена — это тестовый режим разработки.",
+          text: "🎉 Оплата прошла!\n\nВаш доступ к материалам открыт.\n\nСейчас оплата отключена — это тестовый режим разработки.",
           reply_markup: {
-            inline_keyboard: [
-              [{ text: "🍽 ОТКРЫТЬ МЕНЮ", web_app: { url: MINI_APP_URL } }],
-            ],
+            inline_keyboard: [[{ text: "🍽 ОТКРЫТЬ МЕНЮ", web_app: { url: MINI_APP_URL } }]],
           },
         });
       }
