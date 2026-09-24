@@ -1,24 +1,15 @@
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 
-function telegramUrl(method) {
-  return `https://api.telegram.org/bot${BOT_TOKEN}/${method}`;
-}
-
 async function telegram(method, payload) {
-  const response = await fetch(telegramUrl(method), {
+  const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/${method}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-
-  if (!response.ok) {
-    throw new Error(`Telegram API error: ${response.status}`);
-  }
-
   return response.json();
 }
 
-function startMessage() {
+function welcome() {
   return {
     text:
       "Привет! ✨\n\n" +
@@ -51,29 +42,30 @@ export default async function handler(req, res) {
 
   try {
     const update = req.body || {};
+    const message = update.message;
+    const callback = update.callback_query;
 
-    if (update.message?.chat?.id && update.message?.text === "/start") {
-      await telegram("sendMessage", {
-        chat_id: update.message.chat.id,
-        ...startMessage(),
-      });
+    if (message?.chat?.id) {
+      const text = (message.text || "").trim().toLowerCase();
+
+      if (text === "/start" || text === "start" || text === "старт" || text === "начать") {
+        await telegram("sendMessage", {
+          chat_id: message.chat.id,
+          ...welcome(),
+        });
+      }
     }
 
-    if (update.callback_query) {
-      const query = update.callback_query;
+    if (callback?.message?.chat?.id) {
+      await telegram("answerCallbackQuery", { callback_query_id: callback.id });
 
-      await telegram("answerCallbackQuery", {
-        callback_query_id: query.id,
-      });
-
-      if (query.data === "buy_access") {
+      if (callback.data === "buy_access") {
         await telegram("sendMessage", {
-          chat_id: query.message.chat.id,
+          chat_id: callback.message.chat.id,
           text:
             "🔐 ДОСТУП К МЕНЮ\n\n" +
             "60 готовых блюд: 20 завтраков, 20 обедов и 20 ужинов.\n\n" +
-            "Стоимость доступа — 1 490 ₽.\n\n" +
-            "Следующим шагом подключим оплату, после которой бот автоматически откроет меню.",
+            "Стоимость доступа — 1 490 ₽.",
         });
       }
     }
