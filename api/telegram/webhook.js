@@ -1,4 +1,5 @@
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const MINI_APP_URL = "https://zira-lyart.vercel.app/";
 
 async function telegram(method, payload) {
   const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/${method}`, {
@@ -60,12 +61,19 @@ export default async function handler(req, res) {
       await telegram("answerCallbackQuery", { callback_query_id: callback.id });
 
       if (callback.data === "buy_access") {
+        // Временный режим разработки: оплату пока пропускаем
+        // и сразу имитируем успешную оплату. Позже здесь будет платёжный сервис.
         await telegram("sendMessage", {
           chat_id: callback.message.chat.id,
           text:
-            "🔐 ДОСТУП К МЕНЮ\n\n" +
-            "60 готовых блюд: 20 завтраков, 20 обедов и 20 ужинов.\n\n" +
-            "Стоимость доступа — 1 490 ₽.",
+            "🎉 Оплата прошла!\n\n" +
+            "Ваш доступ к материалам открыт.\n\n" +
+            "Сейчас оплата отключена — это тестовый режим разработки.",
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: "🍽 ОТКРЫТЬ МЕНЮ", web_app: { url: MINI_APP_URL } }],
+            ],
+          },
         });
       }
     }
