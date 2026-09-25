@@ -9,7 +9,7 @@ function telegramUser(initData){
   const params=new URLSearchParams(initData); const hash=params.get('hash'); const authDate=params.get('auth_date');
   if(!hash||!authDate)return null;
   const age=Math.floor(Date.now()/1000)-Number(authDate); if(!Number.isFinite(age)||age<0||age>86400)return null;
-  const dataCheck=[...params.entries()].filter(([k])=>k!=='hash').sort(([a],[b])=>a.localeCompare(b)).map(([k,v])=>k+'='+v).join('\\n');
+  const dataCheck=[...params.entries()].filter(([k])=>k!=='hash').sort(([a],[b])=>a.localeCompare(b)).map(([k,v])=>k+'='+v).join('\n');
   const secret=crypto.createHmac('sha256','WebAppData').update(botToken).digest();
   const expected=crypto.createHmac('sha256',secret).update(dataCheck).digest('hex');
   if(!crypto.timingSafeEqual(Buffer.from(expected,'hex'),Buffer.from(hash,'hex')))return null;
