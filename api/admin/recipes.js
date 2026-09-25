@@ -104,7 +104,16 @@ export default async function handler(req,res){
     const next={version:1,recipes:list};
     await redis('SET',[REDIS_KEY,JSON.stringify(next)]);
 
-    return res.status(200).json({ok:true,recipes:list,commit:null});
+    const verify=await redis('GET',[REDIS_KEY]);
+    let verified=null;
+    try{verified=typeof verify==='string'?JSON.parse(verify):verify}catch{}
+    const verifiedList=Array.isArray(verified?.recipes)?verified.recipes:[];
+    const saved=body.action==='delete'
+      ? !verifiedList.some(x=>Number(x.id)===Number(body.id))
+      : verifiedList.some(x=>Number(x.id)===Number(body.recipe?.id||0)||String(x.name||'')===String(body.recipe?.name||''));
+    if(!saved)throw new Error('Redis не подтвердил сохранение блюда');
+
+    return res.status(200).json({ok:true,recipes:verifiedList,commit:null});
   }catch(e){
     console.error('Redis recipes error:',e);
     return res.status(500).json({ok:false,error:e.message||'Ошибка сервера'});
