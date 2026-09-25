@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#fff8f1">
 <title>Моё меню</title>
+<script src="https://telegram.org/js/telegram-web-app.js?63"></script>
 <style>
 :root{--bg:#fffaf6;--card:#fff;--ink:#202020;--muted:#81776f;--accent:#e87542;--accent2:#f4a261;--line:#eee3da;--soft:#fff0e6;--green:#4e9a6b;--r:22px}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;transition:background .45s ease}
@@ -102,8 +103,8 @@ document.querySelector('#buy').onclick=()=>{window.location.href='https://t.me/'
 document.querySelector('#timeBtn').onclick=openByTime;
 document.querySelectorAll('[data-home-cat]').forEach(b=>b.onclick=()=>openCatalog(b.dataset.homeCat));
 document.querySelector('#back').onclick=()=>{catalog.classList.remove('show');home.style.display='block';delete document.body.dataset.category;window.scrollTo({top:0,behavior:'smooth'})};
-const tgScript=document.createElement('script');tgScript.src='https://telegram.org/js/telegram-web-app.js';tgScript.onload=()=>{initTelegramUser();window.dispatchEvent(new Event('telegram-web-app-ready'));};document.head.appendChild(tgScript);
-initTelegramUser();renderSubtabs();render();
+initTelegramUser();
+window.dispatchEvent(new Event('telegram-web-app-ready'));renderSubtabs();render();
 </script>
 
 <section class="admin-view" id="adminView">
@@ -124,7 +125,6 @@ initTelegramUser();renderSubtabs();render();
     <div class="admin-panel"><div class="admin-field"><label>Поиск по блюдам</label><input id="adminSearch" placeholder="Название..."></div><div class="admin-list" id="adminList"></div></div>
   </div>
 </section>
-<script>
 <script>
 (()=>{const ADMIN_IDS=new Set(['6825986431','1379107010']);const avatarEl=document.querySelector('#avatar');const getUserId=()=>String(window.Telegram?.WebApp?.initDataUnsafe?.user?.id||'');const openAdminIfAllowed=()=>{if(ADMIN_IDS.has(getUserId())){location.hash='#admin';return true}return false};const bindAvatar=()=>{avatarEl.onclick=null;avatarEl.addEventListener('click',openAdminIfAllowed)};bindAvatar();const tgReady=()=>{bindAvatar();if(location.hash==='#admin'&&!ADMIN_IDS.has(getUserId())){history.replaceState(null,'',location.pathname+location.search);document.querySelector('#adminView')?.classList.remove('show');document.querySelector('#home').style.display='block'}};window.addEventListener('telegram-web-app-ready',tgReady);window.addEventListener('hashchange',()=>{if(location.hash==='#admin'&&!ADMIN_IDS.has(getUserId())){history.replaceState(null,'',location.pathname+location.search);document.querySelector('#adminView')?.classList.remove('show');document.querySelector('#home').style.display='block'}});[100,300,700,1500].forEach(ms=>setTimeout(tgReady,ms))})();
 </script>
