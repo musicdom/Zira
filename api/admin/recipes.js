@@ -17,7 +17,7 @@ function telegramUser(initData){
 }
 function auth(req){const user=telegramUser(req.headers['x-telegram-init-data']||'');return user&&ADMIN_IDS.has(String(user.id))?user:null}
 async function gh(method,url,body){const r=await fetch(GITHUB_API+url,{method,headers:{Authorization:'Bearer '+process.env.GITHUB_TOKEN,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});const j=await r.json();if(!r.ok)throw new Error(j.message||'GitHub API error');return j}
-async function getFile(){return gh('GET',`/repos/${REPO}/contents/${PATH}?ref=main`)}
+async function getFile(){const r=await fetch(GITHUB_API+`/repos/${REPO}/contents/${PATH}?ref=main`,{headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}});const j=await r.json();if(!r.ok)throw new Error(j.message||'GitHub API error');return j}
 function validRecipe(r){return r&&typeof r.name==='string'&&r.name.trim()&&typeof r.cat==='string'&&Array.isArray(r.filters)&&Array.isArray(r.ingredients)&&Array.isArray(r.steps)}
 export default async function handler(req,res){
  const user=auth(req); if(!user)return res.status(403).json({ok:false,error:'Доступ разрешён только администраторам Telegram'});
