@@ -1,3 +1,5 @@
+import seedData from '../data/recipes.json' with { type: 'json' };
+
 const REDIS_URL=process.env.UPSTASH_REDIS_REST_URL||process.env.KV_REST_API_URL||'';
 const REDIS_TOKEN=process.env.UPSTASH_REDIS_REST_TOKEN||process.env.KV_REST_API_TOKEN||'';
 const REDIS_KEY='zira:recipes:v1';
@@ -10,29 +12,31 @@ async function redis(command,args=[]){
   return j.result;
 }
 
-async function getRecipes(){
+function seedRecipes(){
+  return Array.isArray(seedData)?seedData:(Array.isArray(seedData?.recipes)?seedData.recipes:[]);
+}
+
+async function getUserRecipes(){
   const stored=await redis('GET',[REDIS_KEY]);
-  if(stored){
-    try{
-      const data=typeof stored==='string'?JSON.parse(stored):stored;
-      const recipes=Array.isArray(data?.recipes)?data.recipes:[];
-      const userRecipes=recipes.filter(r=>Number(r.id)>80);
-      if(userRecipes.length!==recipes.length){
-        const cleaned={version:1,recipes:userRecipes};
-        await redis('SET',[REDIS_KEY,JSON.stringify(cleaned)]);
-        return cleaned;
-      }
-      return data;
-    }catch{}
+  if(!stored)return [];
+  try{
+    const data=typeof stored==='string'?JSON.parse(stored):stored;
+    return Array.isArray(data?.recipes)?data.recipes.filter(r=>Number(r.id)>80):[];
+  }catch{
+    return [];
   }
-  return {version:1,recipes:[]};
 }
 
 export default async function handler(req,res){
   if(req.method!=='GET')return res.status(405).json({ok:false,error:'Метод не поддерживается'});
   try{
-    const data=await getRecipes();
-    return res.status(200).json({ok:true,version:data.version||1,recipes:Array.isArray(data.recipes)?data.recipes:[]});
+    const base=seedRecipes();
+    let user=[];
+    try{user=await getUserRecipes()}catch(e){console.error('Redis user recipes error:',e);}
+    const ids=new Set(base.map(r=>Number(r.id)));
+    const extra=user.filter(r=>!ids.has(Number(r.id)));
+    const recipes=[...base,...extra];
+    return res.status(200).json({ok:true,version:1,recipes});
   }catch(e){
     console.error('Public recipes error:',e);
     return res.status(500).json({ok:false,error:'Не удалось загрузить каталог блюд'});
