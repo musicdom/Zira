@@ -1,3 +1,4 @@
+let recipes=[];
 let active='all',query='',subfilter='all';
 const home=document.querySelector('#home'),catalog=document.querySelector('#catalog'),avatar=document.querySelector('#avatar'),userName=document.querySelector('#userName');
 function initTelegramUser(){const tg=window.Telegram?.WebApp;const user=tg?.initDataUnsafe?.user;if(!user)return;if(user.photo_url)avatar.innerHTML=`<img src="${user.photo_url}" alt="Аватар пользователя">`;else avatar.textContent=(user.first_name||'П').slice(0,1).toUpperCase();userName.textContent=[user.first_name,user.last_name].filter(Boolean).join(' ')||'Добро пожаловать 🤎'}
@@ -37,7 +38,6 @@ document.querySelector('#buy').onclick=()=>{window.location.href='https://t.me/'
 document.querySelector('#timeBtn').onclick=openByTime;
 document.querySelectorAll('[data-home-cat]').forEach(b=>b.onclick=()=>openCatalog(b.dataset.homeCat));
 document.querySelector('#back').onclick=()=>{catalog.classList.remove('show');home.style.display='block';delete document.body.dataset.category;window.scrollTo({top:0,behavior:'smooth'})};
-const tgScript=document.createElement('script');tgScript.src='https://telegram.org/js/telegram-web-app.js';tgScript.onload=initTelegramUser;document.head.appendChild(tgScript);
 initTelegramUser();renderSubtabs();render();
 
 fetch('/api/recipes?ts='+Date.now(),{cache:'no-store'})
