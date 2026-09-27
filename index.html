@@ -22,32 +22,52 @@
 <div class="modal" id="modal"><div class="sheet"><div class="sheet-head"><b>Рецепт</b><button class="close" id="close">×</button></div><div id="detail"></div></div></div><div class="modal" id="howtoModal"><div class="sheet howto-sheet"><div class="sheet-head"><b>Руководство по использованию</b><button class="close" id="howtoClose">×</button></div><p class="howto-intro">Всё просто: выбирай блюда, адаптируй их под себя и учитывай несколько важных правил.</p><div class="howto-card"><h3>⚖️ Взвешивание продуктов</h3><p>В рецептах продукты указаны в сыром или сухом виде, до приготовления, если не указано иное. Крупы и макароны — до варки. Мясо, рыба и морепродукты — сырые, без костей и несъедобных частей. Овощи и фрукты — очищенные, если это необходимо. Яйца — без скорлупы.</p></div><div class="howto-card"><h3>🥑 КБЖУ</h3><p>Расчёты ориентировочные и основаны на средних значениях продуктов. Фактические показатели могут отличаться в зависимости от производителя и состава. Для точности сверяйся с упаковкой. Не забывай учитывать масло, соусы и другие добавки.</p></div><div class="howto-card"><h3>🥛 Замены продуктов</h3><p>Молочные продукты можно заменять безлактозными аналогами. При этом КБЖУ может измениться — всегда проверяй пищевую ценность на упаковке.</p></div><div class="howto-card"><h3>🤍 Подстраивай под себя</h3><p>Меняй продукты на подходящие аналоги и регулируй порции под свои потребности. При изменении ингредиентов или их количества пересчитывай КБЖУ.</p></div><div class="howto-final"><b>Питание не должно быть сложным 🤍</b>Используй меню как удобную основу, которая помогает экономить время и каждый день решает вопрос: «Что сегодня приготовить?»</div></div></div>
 <div class="gate" id="gate"><div class="gate-box"><div class="gate-icon">🍽️</div><h2>Ваше меню готово</h2><p>После покупки здесь откроются все 80 рецептов: блюда, фотографии, граммовки, калории, БЖУ и подробное приготовление.</p><button class="buy" id="buy">🔐 Получить доступ · 1 490 ₽</button><div class="bonus">После оплаты бот выдаст персональную ссылку на меню</div></div></div>
 <section class="admin-view" id="adminView">
-  <div class="admin-head">
-    <div><div class="admin-kicker">Управление меню</div><h1>Админ-панель</h1></div>
-    <button class="admin-back" id="adminBack">← Меню</button>
+  <div class="admin-hero">
+    <div>
+      <div class="admin-kicker">Kildisheva_food · управление</div>
+      <h1>Меню</h1>
+      <p>Добавляйте и редактируйте блюда в одном месте.</p>
+    </div>
+    <button class="admin-back" id="adminBack" type="button"><span>←</span> Меню</button>
   </div>
   <div class="admin-panel admin-login" id="adminLoginPanel"><div class="admin-field"><label>Доступ к админ-панели</label><div class="admin-status">Проверяем Telegram-аккаунт…</div></div></div>
   <div id="adminContent" hidden>
-    <div class="admin-toolbar">
-      <div><div class="admin-section-title">Ваши блюда</div><div class="admin-count" id="adminCount">0 блюд</div></div>
-      <button class="admin-primary admin-add" id="adminNew">＋ Добавить блюдо</button>
+    <div class="admin-overview">
+      <div><span class="admin-overview-label">В меню</span><strong id="adminCount">0 блюд</strong></div>
+      <button class="admin-primary admin-add" id="adminNew" type="button"><span>＋</span> Новое блюдо</button>
     </div>
     <div class="admin-panel admin-list-panel">
-      <div class="admin-field admin-search-field"><label for="adminSearch">Поиск</label><input id="adminSearch" placeholder="Название блюда..." autocomplete="off"></div>
+      <div class="admin-list-head"><div><div class="admin-section-title">Блюда</div><div class="admin-hint">Нажмите «Изменить», чтобы открыть карточку.</div></div></div>
+      <div class="admin-search"><span>⌕</span><input id="adminSearch" placeholder="Поиск по названию" autocomplete="off"></div>
       <div class="admin-list" id="adminList"></div>
     </div>
     <div class="admin-panel admin-editor" id="adminEditor">
-      <div class="admin-editor-head"><div><div class="admin-section-title" id="adminFormTitle">Добавить блюдо</div><div class="admin-hint">Заполните карточку и сохраните её в меню</div></div><button class="admin-secondary" id="adminCancel" type="button">Отмена</button></div>
+      <div class="admin-editor-top"><div><span class="admin-editor-kicker">Карточка блюда</span><div class="admin-section-title" id="adminFormTitle">Новое блюдо</div></div><button class="admin-secondary" id="adminCancel" type="button">Отмена</button></div>
       <input id="adminId" type="hidden">
-      <div class="admin-block"><div class="admin-block-title">Основное</div>
-        <div class="admin-row"><div class="admin-field"><label>Название блюда</label><input id="adminName" placeholder="Например, Омлет с овощами"></div><div class="admin-field"><label>Эмодзи</label><input id="adminEmoji" placeholder="🍳" autocomplete="off"><div class="emoji-picker" id="emojiPicker"><button type="button" data-emoji="🍳">🍳</button><button type="button" data-emoji="🥞">🥞</button><button type="button" data-emoji="🥣">🥣</button><button type="button" data-emoji="🍲">🍲</button><button type="button" data-emoji="🥗">🥗</button><button type="button" data-emoji="🍰">🍰</button><button type="button" data-emoji="🍓">🍓</button><button type="button" data-emoji="🥑">🥑</button><button type="button" data-emoji="🍗">🍗</button><button type="button" data-emoji="🐟">🐟</button><button type="button" data-emoji="🍤">🍤</button></div></div></div>
-        <div class="admin-row"><div class="admin-field"><label>Категория</label><select id="adminCat"><option>Завтраки</option><option>Обеды</option><option>Ужины</option><option>Десерты</option><option>Салаты</option></select></div><div class="admin-field"><label>Фото — URL</label><input id="adminImage" placeholder="https://..."></div></div>
+      <div class="admin-block">
+        <div class="admin-block-title"><span>01</span> Основное</div>
+        <div class="admin-row admin-main-row">
+          <div class="admin-field admin-name-field"><label>Название блюда</label><input id="adminName" placeholder="Например, Омлет с овощами"></div>
+          <div class="admin-field"><label>Эмодзи</label><div class="admin-emoji-input"><input id="adminEmoji" placeholder="🍳" autocomplete="off"><div class="emoji-picker" id="emojiPicker"><button type="button" data-emoji="🍳">🍳</button><button type="button" data-emoji="🥞">🥞</button><button type="button" data-emoji="🥣">🥣</button><button type="button" data-emoji="🍲">🍲</button><button type="button" data-emoji="🥗">🥗</button><button type="button" data-emoji="🍰">🍰</button><button type="button" data-emoji="🍓">🍓</button><button type="button" data-emoji="🥑">🥑</button><button type="button" data-emoji="🍗">🍗</button><button type="button" data-emoji="🐟">🐟</button><button type="button" data-emoji="🍤">🍤</button></div></div></div>
+        </div>
+        <div class="admin-row">
+          <div class="admin-field"><label>Категория</label><select id="adminCat"><option>Завтраки</option><option>Обеды</option><option>Ужины</option><option>Десерты</option><option>Салаты</option></select></div>
+          <div class="admin-field"><label>Фото — ссылка</label><input id="adminImage" placeholder="https://..."></div>
+        </div>
       </div>
-      <div class="admin-block"><div class="admin-block-title">Фильтры</div><div class="admin-filters" id="adminFilters"></div></div>
-      <div class="admin-block"><div class="admin-block-title">КБЖУ</div><div class="admin-row admin-nutrition-row"><div class="admin-field"><label>Калории, ккал</label><input id="adminKcal" type="number" min="0"></div><div class="admin-field"><label>Белки, г</label><input id="adminB" type="number" min="0"></div><div class="admin-field"><label>Жиры, г</label><input id="adminJ" type="number" min="0"></div><div class="admin-field"><label>Углеводы, г</label><input id="adminU" type="number" min="0"></div></div></div>
-      <div class="admin-block"><div class="admin-block-title">Ингредиенты</div><div class="admin-field"><textarea id="adminIngredients" placeholder="Один ингредиент на строку"></textarea></div></div>
-      <div class="admin-block"><div class="admin-block-title">Приготовление</div><div class="admin-field"><textarea id="adminSteps" placeholder="Один шаг на строку"></textarea></div></div>
-      <div class="admin-actions"><button class="admin-primary" id="adminSave">Сохранить блюдо</button><button class="admin-danger" id="adminDelete" hidden>Удалить блюдо</button></div>
+      <div class="admin-block"><div class="admin-block-title"><span>02</span> Фильтры</div><div class="admin-filters" id="adminFilters"></div></div>
+      <div class="admin-block">
+        <div class="admin-block-title"><span>03</span> КБЖУ <em>на порцию</em></div>
+        <div class="admin-row admin-nutrition-row">
+          <div class="admin-field"><label>Калории</label><div class="admin-unit"><input id="adminKcal" type="number" min="0" placeholder="0"><span>ккал</span></div></div>
+          <div class="admin-field"><label>Белки</label><div class="admin-unit"><input id="adminB" type="number" min="0" placeholder="0"><span>г</span></div></div>
+          <div class="admin-field"><label>Жиры</label><div class="admin-unit"><input id="adminJ" type="number" min="0" placeholder="0"><span>г</span></div></div>
+          <div class="admin-field"><label>Углеводы</label><div class="admin-unit"><input id="adminU" type="number" min="0" placeholder="0"><span>г</span></div></div>
+        </div>
+      </div>
+      <div class="admin-block"><div class="admin-block-title"><span>04</span> Ингредиенты</div><div class="admin-field"><textarea id="adminIngredients" placeholder="Каждый ингредиент с новой строки"></textarea><div class="admin-field-note">Один продукт — одна строка.</div></div></div>
+      <div class="admin-block"><div class="admin-block-title"><span>05</span> Приготовление</div><div class="admin-field"><textarea id="adminSteps" placeholder="Каждый шаг с новой строки"></textarea><div class="admin-field-note">Один шаг — одна строка. Порядок сохранится.</div></div></div>
+      <div class="admin-actions"><button class="admin-primary admin-save" id="adminSave" type="button">Сохранить блюдо <span>→</span></button><button class="admin-danger" id="adminDelete" type="button" hidden>Удалить блюдо</button></div>
     </div>
   </div>
 </section>
