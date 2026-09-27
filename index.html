@@ -36,11 +36,6 @@
       <div><span class="admin-overview-label">В меню</span><strong id="adminCount">0 блюд</strong></div>
       <button class="admin-primary admin-add" id="adminNew" type="button"><span>＋</span> Новое блюдо</button>
     </div>
-    <div class="admin-panel admin-list-panel">
-      <div class="admin-list-head"><div><div class="admin-section-title">Блюда</div><div class="admin-hint">Нажмите «Изменить», чтобы открыть карточку.</div></div></div>
-      <div class="admin-search"><span>⌕</span><input id="adminSearch" placeholder="Поиск по названию" autocomplete="off"></div>
-      <div class="admin-list" id="adminList"></div>
-    </div>
     <div class="admin-panel admin-editor" id="adminEditor">
       <div class="admin-editor-top"><div><span class="admin-editor-kicker">Карточка блюда</span><div class="admin-section-title" id="adminFormTitle">Новое блюдо</div></div><button class="admin-secondary" id="adminCancel" type="button">Отмена</button></div>
       <input id="adminId" type="hidden">
@@ -69,7 +64,12 @@
       <div class="admin-block"><div class="admin-block-title"><span>05</span> Приготовление</div><div class="admin-field"><textarea id="adminSteps" placeholder="Каждый шаг с новой строки"></textarea><div class="admin-field-note">Один шаг — одна строка. Порядок сохранится.</div></div></div>
       <div class="admin-actions"><button class="admin-primary admin-save" id="adminSave" type="button">Сохранить блюдо <span>→</span></button><button class="admin-danger" id="adminDelete" type="button" hidden>Удалить блюдо</button></div>
     </div>
-  </div>
+  </    <div class="admin-panel admin-list-panel">
+      <div class="admin-list-head"><div><div class="admin-section-title">Блюда</div><div class="admin-hint">Нажмите «Изменить», чтобы открыть карточку.</div></div></div>
+      <div class="admin-search"><span>⌕</span><input id="adminSearch" placeholder="Поиск по названию" autocomplete="off"></div>
+      <div class="admin-list" id="adminList"></div>
+    </div>
+div>
 </section>
 <script src="/js/app.js"></script>
 <script src="/js/telegram-user.js"></script>
