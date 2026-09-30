@@ -12,7 +12,7 @@ export default async function handler(req,res){
     const stored=await redis('GET',[REDIS_KEY]);
     if(!stored)return res.status(200).json({ok:true,version:1,recipes:[]});
     const data=typeof stored==='string'?JSON.parse(stored):stored;
-    const recipes=Array.isArray(data?.recipes)?data.recipes.filter(r=>r&&Number(r.id)>80).map(r=>({...r,source:'admin'})):[];
+    const recipes=Array.isArray(data?.recipes)?data.recipes.filter(r=>r&&Number(r.id)>80).map(r=>({...r,source:'admin',filters:Array.isArray(r.filters)?r.filters.filter(f=>f!=='airfryer'&&f!=='oven'):[]})):[];
     return res.status(200).json({ok:true,version:1,recipes});
   }catch(e){console.error('Public recipes error:',e);return res.status(500).json({ok:false,error:'Не удалось загрузить каталог блюд'})}
 }
