@@ -5,7 +5,7 @@ const REDIS_TOKEN=process.env.UPSTASH_REDIS_REST_TOKEN||process.env.KV_REST_API_
 const REDIS_KEY='zira:recipes:v1';
 const ADMIN_IDS=new Set(['6825986431','1379107010']);
 const CATEGORIES=new Set(['Завтраки','Обеды','Ужины','Десерты','Салаты']);
-const FILTERS={Завтраки:new Set(['protein','carbs','oatmeal','eggs','cottage']),Обеды:new Set(['fish','meat','chicken','seafood','airfryer','oven']),Ужины:new Set(['fish','meat','seafood','airfryer','oven']),Десерты:new Set(['lowcal','lactose','nosugar','quick']),Салаты:new Set(['protein','chicken','seafood'])};
+const FILTERS={Завтраки:new Set(['protein','carbs','oatmeal','eggs','cottage']),Обеды:new Set(['fish','meat','chicken','seafood']),Ужины:new Set(['fish','meat','seafood']),Десерты:new Set(['lowcal','lactose','nosugar','quick']),Салаты:new Set(['protein','chicken','seafood'])};
 
 function telegramUser(initData){
   const botToken=process.env.TELEGRAM_BOT_TOKEN;
@@ -32,7 +32,7 @@ async function getRecipes(){
   try{
     const data=typeof stored==='string'?JSON.parse(stored):stored;
     const recipes=Array.isArray(data?.recipes)?data.recipes:[];
-    const cleaned=recipes.filter(r=>Number(r.id)>80).map(r=>({...r,source:'admin'}));
+    const cleaned=recipes.filter(r=>Number(r.id)>80).map(r=>({...r,source:'admin',filters:Array.isArray(r.filters)?r.filters.filter(f=>f!=='airfryer'&&f!=='oven'):[]}));
     const changed=cleaned.length!==recipes.length||cleaned.some((r,i)=>r.source!==recipes[i]?.source);
     const result={version:1,recipes:cleaned};
     if(changed)await redis('SET',[REDIS_KEY,JSON.stringify(result)]);
@@ -54,7 +54,7 @@ export default async function handler(req,res){
     const body=typeof req.body==='string'?JSON.parse(req.body):req.body||{};let list=current.recipes||[];
     if(body.action==='save'){
       if(!validRecipe(body.recipe))return res.status(400).json({ok:false,error:'Проверьте название, категорию, фильтры, КБЖУ, ингредиенты и шаги'});
-      const incoming=body.recipe;const id=Number(incoming.id)||0;const r={...incoming,id,source:'admin'};
+      const incoming=body.recipe;const id=Number(incoming.id)||0;const r={...incoming,id,source:'admin',filters:Array.isArray(incoming.filters)?incoming.filters.filter(f=>f!=='airfryer'&&f!=='oven'):[]};
       const i=id?list.findIndex(x=>Number(x.id)===id):-1;
       if(i>=0)list[i]=r;else{r.id=Math.max(80,...list.map(x=>Number(x.id)||0))+1;list.push(r)}
     }else if(body.action==='delete'){
